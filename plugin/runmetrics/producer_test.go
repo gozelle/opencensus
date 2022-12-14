@@ -3,9 +3,9 @@ package runmetrics_test
 import (
 	"context"
 	"testing"
-
-	"github.com/stretchr/testify/assert"
-
+	
+	"github.com/gozelle/testify/assert"
+	
 	"go.opencensus.io/metric/metricdata"
 	"go.opencensus.io/metric/metricexport"
 	"go.opencensus.io/metric/metricproducer"
@@ -150,26 +150,26 @@ func TestEnable(t *testing.T) {
 			[][]string{},
 		},
 	}
-
+	
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-
+			
 			err := runmetrics.Enable(test.options)
-
+			
 			if err != nil {
 				t.Errorf("want: nil, got: %v", err)
 			}
-
+			
 			defer runmetrics.Disable()
-
+			
 			exporter := &testExporter{}
 			reader := metricexport.NewReader()
 			reader.ReadAndExport(exporter)
-
+			
 			for _, want := range test.wantMetricNames {
 				assertNames(t, true, exporter, want)
 			}
-
+			
 			for _, dontWant := range test.dontWantMetricNames {
 				assertNames(t, false, exporter, dontWant)
 			}
@@ -179,12 +179,12 @@ func TestEnable(t *testing.T) {
 
 func assertNames(t *testing.T, wantIncluded bool, exporter *testExporter, expectedNames []string) {
 	t.Helper()
-
+	
 	metricNames := make([]string, 0)
 	for _, v := range exporter.data {
 		metricNames = append(metricNames, v.Descriptor.Name)
 	}
-
+	
 	for _, want := range expectedNames {
 		if wantIncluded {
 			assert.Contains(t, metricNames, want)
@@ -199,7 +199,7 @@ func TestEnable_RegistersWithGlobalManager(t *testing.T) {
 	if err != nil {
 		t.Errorf("want: nil, got: %v", err)
 	}
-
+	
 	registeredCount := len(metricproducer.GlobalManager().GetAll())
 	assert.Equal(t, 1, registeredCount, "expected a producer to be registered")
 }
@@ -209,12 +209,12 @@ func TestEnable_RegistersNoDuplicates(t *testing.T) {
 	if err != nil {
 		t.Errorf("want: nil, got: %v", err)
 	}
-
+	
 	err = runmetrics.Enable(runmetrics.RunMetricOptions{})
 	if err != nil {
 		t.Errorf("want: nil, got: %v", err)
 	}
-
+	
 	producerCount := len(metricproducer.GlobalManager().GetAll())
 	assert.Equal(t, 1, producerCount, "expected one registered producer")
 }
@@ -224,9 +224,9 @@ func TestDisable(t *testing.T) {
 	if err != nil {
 		t.Errorf("want: nil, got: %v", err)
 	}
-
+	
 	runmetrics.Disable()
-
+	
 	producerCount := len(metricproducer.GlobalManager().GetAll())
 	assert.Equal(t, 0, producerCount, "expected one registered producer")
 }
