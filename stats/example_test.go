@@ -17,7 +17,7 @@ package stats_test
 import (
 	"context"
 	
-	"github.com/gozelle/opencensus-go/stats"
+	"github.com/gozelle/opencensus/stats"
 )
 
 func ExampleRecord() {

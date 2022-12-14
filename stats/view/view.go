@@ -24,9 +24,9 @@ import (
 	"sync/atomic"
 	"time"
 	
-	"github.com/gozelle/opencensus-go/metric/metricdata"
-	"github.com/gozelle/opencensus-go/stats"
-	"github.com/gozelle/opencensus-go/tag"
+	"github.com/gozelle/opencensus/metric/metricdata"
+	"github.com/gozelle/opencensus/stats"
+	"github.com/gozelle/opencensus/tag"
 )
 
 // View allows users to aggregate the recorded stats.Measurements.

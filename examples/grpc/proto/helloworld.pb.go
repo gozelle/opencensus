@@ -13,7 +13,7 @@ It has these top-level messages:
 	HelloRequest
 	HelloReply
 */
-package helloworld // import "github.com/gozelle/opencensus-go/examples/grpc/proto"
+package helloworld // import "github.com/gozelle/opencensus/examples/grpc/proto"
 
 import (
 	fmt "fmt"

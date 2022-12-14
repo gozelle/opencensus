@@ -15,14 +15,14 @@
 // Package b3 contains a propagation.HTTPFormat implementation
 // for B3 propagation. See https://github.com/openzipkin/b3-propagation
 // for more details.
-package b3 // import "github.com/gozelle/opencensus-go/plugin/ochttp/propagation/b3"
+package b3 // import "github.com/gozelle/opencensus/plugin/ochttp/propagation/b3"
 
 import (
 	"encoding/hex"
 	"net/http"
 	
-	"github.com/gozelle/opencensus-go/trace"
-	"github.com/gozelle/opencensus-go/trace/propagation"
+	"github.com/gozelle/opencensus/trace"
+	"github.com/gozelle/opencensus/trace/propagation"
 )
 
 // B3 headers that OpenCensus understands.

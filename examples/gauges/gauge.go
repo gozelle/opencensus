@@ -41,10 +41,10 @@ import (
 	"strings"
 	"time"
 	
-	"github.com/gozelle/opencensus-go/examples/exporter"
-	"github.com/gozelle/opencensus-go/metric"
-	"github.com/gozelle/opencensus-go/metric/metricdata"
-	"github.com/gozelle/opencensus-go/metric/metricproducer"
+	"github.com/gozelle/opencensus/examples/exporter"
+	"github.com/gozelle/opencensus/metric"
+	"github.com/gozelle/opencensus/metric/metricdata"
+	"github.com/gozelle/opencensus/metric/metricproducer"
 )
 
 const (

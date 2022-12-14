@@ -17,7 +17,7 @@ package metricproducer
 import (
 	"testing"
 	
-	"github.com/gozelle/opencensus-go/metric/metricdata"
+	"github.com/gozelle/opencensus/metric/metricdata"
 )
 
 type testProducer struct {

@@ -13,7 +13,7 @@ It has these top-level messages:
 	FooRequest
 	FooResponse
 */
-package testpb // import "github.com/gozelle/opencensus-go/internal/testpb"
+package testpb // import "github.com/gozelle/opencensus/internal/testpb"
 
 import (
 	fmt "fmt"

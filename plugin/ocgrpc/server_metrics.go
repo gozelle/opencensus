@@ -16,9 +16,9 @@
 package ocgrpc
 
 import (
-	"github.com/gozelle/opencensus-go/stats"
-	"github.com/gozelle/opencensus-go/stats/view"
-	"github.com/gozelle/opencensus-go/tag"
+	"github.com/gozelle/opencensus/stats"
+	"github.com/gozelle/opencensus/stats/view"
+	"github.com/gozelle/opencensus/tag"
 )
 
 // The following variables are measures are recorded by ServerHandler:

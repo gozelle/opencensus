@@ -7,9 +7,9 @@ import (
 	"strings"
 	"time"
 	
-	"github.com/gozelle/opencensus-go/metric/metricdata"
-	"github.com/gozelle/opencensus-go/metric/metricexport"
-	"github.com/gozelle/opencensus-go/stats/view"
+	"github.com/gozelle/opencensus/metric/metricdata"
+	"github.com/gozelle/opencensus/metric/metricexport"
+	"github.com/gozelle/opencensus/stats/view"
 )
 
 // Exporter keeps exported metric data in memory to aid in testing the instrumentation.

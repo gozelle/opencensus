@@ -23,10 +23,10 @@ import (
 	"encoding/json"
 	
 	"github.com/google/go-cmp/cmp"
-	"github.com/gozelle/opencensus-go/metric/metricdata"
-	"github.com/gozelle/opencensus-go/metric/metricexport"
-	"github.com/gozelle/opencensus-go/stats"
-	"github.com/gozelle/opencensus-go/tag"
+	"github.com/gozelle/opencensus/metric/metricdata"
+	"github.com/gozelle/opencensus/metric/metricexport"
+	"github.com/gozelle/opencensus/stats"
+	"github.com/gozelle/opencensus/tag"
 )
 
 type recordValWithTag struct {

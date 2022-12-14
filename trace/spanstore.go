@@ -18,7 +18,7 @@ import (
 	"sync"
 	"time"
 	
-	"github.com/gozelle/opencensus-go/internal"
+	"github.com/gozelle/opencensus/internal"
 )
 
 const (

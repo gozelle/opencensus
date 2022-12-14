@@ -19,7 +19,7 @@ import (
 	"sync/atomic"
 	"time"
 	
-	"github.com/gozelle/opencensus-go/metric/metricdata"
+	"github.com/gozelle/opencensus/metric/metricdata"
 )
 
 // Float64Gauge represents a float64 value that can go up and down.

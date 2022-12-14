@@ -29,11 +29,11 @@ import (
 	
 	"net/http"
 	
-	"github.com/gozelle/opencensus-go/examples/exporter"
-	"github.com/gozelle/opencensus-go/stats"
-	"github.com/gozelle/opencensus-go/stats/view"
-	"github.com/gozelle/opencensus-go/tag"
-	"github.com/gozelle/opencensus-go/zpages"
+	"github.com/gozelle/opencensus/examples/exporter"
+	"github.com/gozelle/opencensus/stats"
+	"github.com/gozelle/opencensus/stats/view"
+	"github.com/gozelle/opencensus/tag"
+	"github.com/gozelle/opencensus/zpages"
 )
 
 const (
@@ -166,6 +166,6 @@ func processLine(ctx context.Context, in []byte) (out []byte, err error) {
 		ms := float64(time.Since(startTime).Nanoseconds()) / 1e6
 		stats.Record(ctx, mLinesIn.M(1), mLatencyMs.M(ms), mLineLengths.M(int64(len(in))))
 	}()
-
+	
 	return bytes.ToUpper(in), nil
 }

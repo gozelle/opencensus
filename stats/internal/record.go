@@ -15,7 +15,7 @@
 package internal
 
 import (
-	"github.com/gozelle/opencensus-go/tag"
+	"github.com/gozelle/opencensus/tag"
 )
 
 // DefaultRecorder will be called for each Record call.

@@ -16,4 +16,4 @@
 //
 // For server instrumentation, see Handler. For client-side instrumentation,
 // see Transport.
-package ochttp // import "github.com/gozelle/opencensus-go/plugin/ochttp"
+package ochttp // import "github.com/gozelle/opencensus/plugin/ochttp"

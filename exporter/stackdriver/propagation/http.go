@@ -14,7 +14,7 @@
 
 // Package propagation implement X-Cloud-Trace-Context header propagation used
 // by Google Cloud products.
-package propagation // import "github.com/gozelle/opencensus-go/exporter/stackdriver/propagation"
+package propagation // import "github.com/gozelle/opencensus/exporter/stackdriver/propagation"
 
 import (
 	"encoding/binary"
@@ -24,8 +24,8 @@ import (
 	"strconv"
 	"strings"
 	
-	"github.com/gozelle/opencensus-go/trace"
-	"github.com/gozelle/opencensus-go/trace/propagation"
+	"github.com/gozelle/opencensus/trace"
+	"github.com/gozelle/opencensus/trace/propagation"
 )
 
 const (

@@ -22,8 +22,8 @@ import (
 	"testing"
 	"time"
 	
-	"github.com/gozelle/opencensus-go/plugin/ocgrpc"
-	"github.com/gozelle/opencensus-go/trace"
+	"github.com/gozelle/opencensus/plugin/ocgrpc"
+	"github.com/gozelle/opencensus/trace"
 	"google.golang.org/grpc"
 )
 
@@ -89,6 +89,6 @@ func NewTestClient(l *testing.T) (client FooClient, cleanup func()) {
 		server.GracefulStop()
 		clientConn.Close()
 	}
-
+	
 	return client, cleanup
 }

@@ -21,8 +21,8 @@ import (
 	"strings"
 	"testing"
 	
-	"github.com/gozelle/opencensus-go/trace"
-	"github.com/gozelle/opencensus-go/trace/tracestate"
+	"github.com/gozelle/opencensus/trace"
+	"github.com/gozelle/opencensus/trace/tracestate"
 )
 
 var (

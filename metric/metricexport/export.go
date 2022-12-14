@@ -17,7 +17,7 @@ package metricexport
 import (
 	"context"
 	
-	"github.com/gozelle/opencensus-go/metric/metricdata"
+	"github.com/gozelle/opencensus/metric/metricdata"
 )
 
 // Exporter is an interface that exporters implement to export the metric data.

@@ -15,7 +15,7 @@
 
 // Package tagencoding contains the tag encoding
 // used interally by the stats collector.
-package tagencoding // import "github.com/gozelle/opencensus-go/internal/tagencoding"
+package tagencoding // import "github.com/gozelle/opencensus/internal/tagencoding"
 
 // Values represent the encoded buffer for the values.
 type Values struct {

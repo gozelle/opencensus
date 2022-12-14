@@ -18,10 +18,10 @@ import (
 	"context"
 	"testing"
 	
-	"github.com/gozelle/opencensus-go/stats"
-	"github.com/gozelle/opencensus-go/stats/view"
-	_ "github.com/gozelle/opencensus-go/stats/view" // enable collection
-	"github.com/gozelle/opencensus-go/tag"
+	"github.com/gozelle/opencensus/stats"
+	"github.com/gozelle/opencensus/stats/view"
+	_ "github.com/gozelle/opencensus/stats/view" // enable collection
+	"github.com/gozelle/opencensus/tag"
 )
 
 var m = makeMeasure()

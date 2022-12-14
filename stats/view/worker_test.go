@@ -24,12 +24,12 @@ import (
 	"time"
 	
 	"github.com/google/go-cmp/cmp"
-	"github.com/gozelle/opencensus-go/resource"
+	"github.com/gozelle/opencensus/resource"
 	
-	"github.com/gozelle/opencensus-go/metric/metricdata"
-	"github.com/gozelle/opencensus-go/metric/metricexport"
-	"github.com/gozelle/opencensus-go/stats"
-	"github.com/gozelle/opencensus-go/tag"
+	"github.com/gozelle/opencensus/metric/metricdata"
+	"github.com/gozelle/opencensus/metric/metricexport"
+	"github.com/gozelle/opencensus/stats"
+	"github.com/gozelle/opencensus/tag"
 )
 
 func Test_Worker_ViewRegistration(t *testing.T) {

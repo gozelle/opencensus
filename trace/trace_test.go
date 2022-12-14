@@ -22,7 +22,7 @@ import (
 	"testing"
 	"time"
 	
-	"github.com/gozelle/opencensus-go/trace/tracestate"
+	"github.com/gozelle/opencensus/trace/tracestate"
 )
 
 var (

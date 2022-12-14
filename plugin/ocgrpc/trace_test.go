@@ -20,8 +20,8 @@ import (
 	"testing"
 	"time"
 	
-	"github.com/gozelle/opencensus-go/internal/testpb"
-	"github.com/gozelle/opencensus-go/trace"
+	"github.com/gozelle/opencensus/internal/testpb"
+	"github.com/gozelle/opencensus/trace"
 )
 
 type testExporter struct {

@@ -19,7 +19,7 @@ import (
 	
 	"google.golang.org/grpc/stats"
 	
-	"github.com/gozelle/opencensus-go/trace"
+	"github.com/gozelle/opencensus/trace"
 )
 
 // ServerHandler implements gRPC stats.Handler recording OpenCensus stats and

@@ -19,7 +19,7 @@ import (
 	"math"
 	"time"
 	
-	"github.com/gozelle/opencensus-go/metric/metricdata"
+	"github.com/gozelle/opencensus/metric/metricdata"
 )
 
 // AggregationData represents an aggregated value from a collection.

@@ -1,6 +1,6 @@
 /.idea/
 
-# github.com/gozelle/opencensus-go/exporter/aws
+# github.com/gozelle/opencensus/exporter/aws
 /exporter/aws/
 
 # Exclude vendor, use dep ensure after checkout:

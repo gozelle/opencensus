@@ -18,7 +18,7 @@ import (
 	"context"
 	"net/http"
 	
-	"github.com/gozelle/opencensus-go/tag"
+	"github.com/gozelle/opencensus/tag"
 )
 
 // SetRoute sets the http_server_route tag to the given value.

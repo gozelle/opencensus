@@ -22,8 +22,8 @@ import (
 	"sync"
 	"testing"
 	
-	"github.com/gozelle/opencensus-go/plugin/ochttp"
-	"github.com/gozelle/opencensus-go/trace"
+	"github.com/gozelle/opencensus/plugin/ochttp"
+	"github.com/gozelle/opencensus/trace"
 )
 
 func TestSpanAnnotatingClientTrace(t *testing.T) {

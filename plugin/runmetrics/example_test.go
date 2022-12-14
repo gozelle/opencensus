@@ -6,9 +6,9 @@ import (
 	"log"
 	"sort"
 	
-	"github.com/gozelle/opencensus-go/metric/metricdata"
-	"github.com/gozelle/opencensus-go/metric/metricexport"
-	"github.com/gozelle/opencensus-go/plugin/runmetrics"
+	"github.com/gozelle/opencensus/metric/metricdata"
+	"github.com/gozelle/opencensus/metric/metricexport"
+	"github.com/gozelle/opencensus/plugin/runmetrics"
 )
 
 type printExporter struct {

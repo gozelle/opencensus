@@ -17,7 +17,7 @@ package readme
 import (
 	"context"
 	
-	"github.com/gozelle/opencensus-go/trace"
+	"github.com/gozelle/opencensus/trace"
 )
 
 func traceExamples() {

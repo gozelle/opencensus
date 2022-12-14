@@ -21,7 +21,7 @@ import (
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/stats"
 	
-	"github.com/gozelle/opencensus-go/trace"
+	"github.com/gozelle/opencensus/trace"
 )
 
 func TestClientHandler_traceTagRPC(t *testing.T) {

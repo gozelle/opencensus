@@ -65,4 +65,4 @@ then the trace span will be added to the exemplar associated with the measuremen
 When exported to a supporting back end, you should be able to easily navigate
 to example traces that fell into each bucket in the Distribution.
 */
-package stats // import "github.com/gozelle/opencensus-go/stats"
+package stats // import "github.com/gozelle/opencensus/stats"

@@ -18,7 +18,7 @@ import (
 	"context"
 	"testing"
 	
-	"github.com/gozelle/opencensus-go/tag"
+	"github.com/gozelle/opencensus/tag"
 )
 
 func TestEncodeDecodeTags(t *testing.T) {

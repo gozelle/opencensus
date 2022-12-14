@@ -20,4 +20,4 @@
 //	    EnableCPU: true,
 //	    EnableMemory: true,
 //	})
-package runmetrics // import "github.com/gozelle/opencensus-go/plugin/runmetrics"
+package runmetrics // import "github.com/gozelle/opencensus/plugin/runmetrics"

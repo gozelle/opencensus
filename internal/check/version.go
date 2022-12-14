@@ -26,7 +26,7 @@ import (
 	"strconv"
 	"strings"
 	
-	opencensus "github.com/gozelle/opencensus-go"
+	opencensus "github.com/gozelle/opencensus"
 )
 
 func main() {

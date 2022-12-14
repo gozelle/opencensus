@@ -7,23 +7,23 @@ This example uses:
 * Debugging exporters to print stats and traces to stdout.
 
 ```
-$ go get github.com/gozelle/opencensus-go/examples/grpc/...
+$ go get github.com/gozelle/opencensus/examples/grpc/...
 ```
 
 First, run the server:
 
 ```
-$ go run $(go env GOPATH)/src/github.com/gozelle/opencensus-go/examples/grpc/helloworld_server/main.go
+$ go run $(go env GOPATH)/src/github.com/gozelle/opencensus/examples/grpc/helloworld_server/main.go
 ```
 
 Then, run the client:
 
 ```
-$ go run $(go env GOPATH)/src/github.com/gozelle/opencensus-go/examples/grpc/helloworld_client/main.go
+$ go run $(go env GOPATH)/src/github.com/gozelle/opencensus/examples/grpc/helloworld_client/main.go
 ```
 
 You will see traces and stats exported on the stdout. You can use one of the
-[exporters](https://godoc.org/github.com/gozelle/opencensus-go/exporter)
+[exporters](https://godoc.org/github.com/gozelle/opencensus/exporter)
 to upload collected data to the backend of your choice.
 
 You can also see the z-pages provided from the server:

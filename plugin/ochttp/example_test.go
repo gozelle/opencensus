@@ -18,16 +18,16 @@ import (
 	"log"
 	"net/http"
 	
-	"github.com/gozelle/opencensus-go/plugin/ochttp"
-	"github.com/gozelle/opencensus-go/plugin/ochttp/propagation/b3"
-	"github.com/gozelle/opencensus-go/stats/view"
-	"github.com/gozelle/opencensus-go/tag"
+	"github.com/gozelle/opencensus/plugin/ochttp"
+	"github.com/gozelle/opencensus/plugin/ochttp/propagation/b3"
+	"github.com/gozelle/opencensus/stats/view"
+	"github.com/gozelle/opencensus/tag"
 )
 
 func ExampleTransport() {
 	// import (
-	// 		"github.com/gozelle/opencensus-go/plugin/ochttp"
-	//		"github.com/gozelle/opencensus-go/stats/view"
+	// 		"github.com/gozelle/opencensus/plugin/ochttp"
+	//		"github.com/gozelle/opencensus/stats/view"
 	// )
 	
 	if err := view.Register(
@@ -57,7 +57,7 @@ func ExampleTransport() {
 var usersHandler http.Handler
 
 func ExampleHandler() {
-	// import "github.com/gozelle/opencensus-go/plugin/ochttp"
+	// import "github.com/gozelle/opencensus/plugin/ochttp"
 	
 	http.Handle("/users", ochttp.WithRouteTag(usersHandler, "/users"))
 	
@@ -66,7 +66,7 @@ func ExampleHandler() {
 }
 
 func ExampleHandler_mux() {
-	// import "github.com/gozelle/opencensus-go/plugin/ochttp"
+	// import "github.com/gozelle/opencensus/plugin/ochttp"
 	
 	mux := http.NewServeMux()
 	mux.Handle("/users", ochttp.WithRouteTag(usersHandler, "/users"))

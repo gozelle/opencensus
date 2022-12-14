@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package exporter // import "github.com/gozelle/opencensus-go/examples/exporter"
+package exporter // import "github.com/gozelle/opencensus/examples/exporter"
 
 import (
 	"encoding/hex"
@@ -20,8 +20,8 @@ import (
 	"regexp"
 	"time"
 	
-	"github.com/gozelle/opencensus-go/stats/view"
-	"github.com/gozelle/opencensus-go/trace"
+	"github.com/gozelle/opencensus/stats/view"
+	"github.com/gozelle/opencensus/trace"
 )
 
 // indent these many spaces

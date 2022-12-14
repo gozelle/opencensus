@@ -17,7 +17,7 @@ package trace
 import (
 	"sync"
 	
-	"github.com/gozelle/opencensus-go/trace/internal"
+	"github.com/gozelle/opencensus/trace/internal"
 )
 
 // Config represents the global tracing configuration.

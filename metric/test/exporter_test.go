@@ -4,12 +4,12 @@ import (
 	"context"
 	"fmt"
 	
-	"github.com/gozelle/opencensus-go/metric"
-	"github.com/gozelle/opencensus-go/metric/metricdata"
-	"github.com/gozelle/opencensus-go/metric/metricexport"
-	"github.com/gozelle/opencensus-go/stats"
-	"github.com/gozelle/opencensus-go/stats/view"
-	"github.com/gozelle/opencensus-go/tag"
+	"github.com/gozelle/opencensus/metric"
+	"github.com/gozelle/opencensus/metric/metricdata"
+	"github.com/gozelle/opencensus/metric/metricexport"
+	"github.com/gozelle/opencensus/stats"
+	"github.com/gozelle/opencensus/stats/view"
+	"github.com/gozelle/opencensus/tag"
 )
 
 var (

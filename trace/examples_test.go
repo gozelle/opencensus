@@ -18,7 +18,7 @@ import (
 	"context"
 	"fmt"
 	
-	"github.com/gozelle/opencensus-go/trace"
+	"github.com/gozelle/opencensus/trace"
 )
 
 // This example shows how to use StartSpan and (*Span).End to capture

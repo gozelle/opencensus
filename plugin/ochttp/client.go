@@ -18,8 +18,8 @@ import (
 	"net/http"
 	"net/http/httptrace"
 	
-	"github.com/gozelle/opencensus-go/trace"
-	"github.com/gozelle/opencensus-go/trace/propagation"
+	"github.com/gozelle/opencensus/trace"
+	"github.com/gozelle/opencensus/trace/propagation"
 )
 
 // Transport is an http.RoundTripper that instruments all outgoing requests with

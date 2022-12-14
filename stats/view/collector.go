@@ -19,8 +19,8 @@ import (
 	"sort"
 	"time"
 	
-	"github.com/gozelle/opencensus-go/internal/tagencoding"
-	"github.com/gozelle/opencensus-go/tag"
+	"github.com/gozelle/opencensus/internal/tagencoding"
+	"github.com/gozelle/opencensus/tag"
 )
 
 type collector struct {

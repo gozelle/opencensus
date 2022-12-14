@@ -18,10 +18,10 @@ package view
 import (
 	"time"
 	
-	"github.com/gozelle/opencensus-go/resource"
+	"github.com/gozelle/opencensus/resource"
 	
-	"github.com/gozelle/opencensus-go/metric/metricdata"
-	"github.com/gozelle/opencensus-go/stats"
+	"github.com/gozelle/opencensus/metric/metricdata"
+	"github.com/gozelle/opencensus/stats"
 )
 
 func getUnit(unit string) metricdata.Unit {

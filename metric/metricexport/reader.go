@@ -21,9 +21,9 @@ import (
 	"sync"
 	"time"
 	
-	"github.com/gozelle/opencensus-go/metric/metricdata"
-	"github.com/gozelle/opencensus-go/metric/metricproducer"
-	"github.com/gozelle/opencensus-go/trace"
+	"github.com/gozelle/opencensus/metric/metricdata"
+	"github.com/gozelle/opencensus/metric/metricproducer"
+	"github.com/gozelle/opencensus/trace"
 )
 
 var (

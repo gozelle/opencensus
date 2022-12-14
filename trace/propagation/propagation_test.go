@@ -19,7 +19,7 @@ import (
 	"fmt"
 	"testing"
 	
-	. "github.com/gozelle/opencensus-go/trace"
+	. "github.com/gozelle/opencensus/trace"
 )
 
 func TestBinary(t *testing.T) {

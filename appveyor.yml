@@ -2,7 +2,7 @@ version: "{build}"
 
 platform: x64
 
-clone_folder: c:\gopath\src\github.com/gozelle/opencensus-go
+clone_folder: c:\gopath\src\github.com/gozelle/opencensus
 
 environment:
   GOPATH: 'c:\gopath'

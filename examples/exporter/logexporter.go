@@ -14,7 +14,7 @@
 
 // Package exporter contains a log exporter that supports exporting
 // OpenCensus metrics and spans to a logging framework.
-package exporter // import "github.com/gozelle/opencensus-go/examples/exporter"
+package exporter // import "github.com/gozelle/opencensus/examples/exporter"
 
 import (
 	"context"
@@ -25,9 +25,9 @@ import (
 	"sync"
 	"time"
 	
-	"github.com/gozelle/opencensus-go/metric/metricdata"
-	"github.com/gozelle/opencensus-go/metric/metricexport"
-	"github.com/gozelle/opencensus-go/trace"
+	"github.com/gozelle/opencensus/metric/metricdata"
+	"github.com/gozelle/opencensus/metric/metricexport"
+	"github.com/gozelle/opencensus/trace"
 )
 
 // LogExporter exports metrics and span to log file

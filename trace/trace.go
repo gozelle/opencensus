@@ -24,8 +24,8 @@ import (
 	"sync/atomic"
 	"time"
 	
-	"github.com/gozelle/opencensus-go/internal"
-	"github.com/gozelle/opencensus-go/trace/tracestate"
+	"github.com/gozelle/opencensus/internal"
+	"github.com/gozelle/opencensus/trace/tracestate"
 )
 
 type tracer struct{}

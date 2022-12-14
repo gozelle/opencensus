@@ -22,10 +22,10 @@ import (
 	"sync"
 	"time"
 	
-	"github.com/gozelle/opencensus-go/stats"
-	"github.com/gozelle/opencensus-go/tag"
-	"github.com/gozelle/opencensus-go/trace"
-	"github.com/gozelle/opencensus-go/trace/propagation"
+	"github.com/gozelle/opencensus/stats"
+	"github.com/gozelle/opencensus/tag"
+	"github.com/gozelle/opencensus/trace"
+	"github.com/gozelle/opencensus/trace/propagation"
 )
 
 // Handler is an http.Handler wrapper to instrument your HTTP server with

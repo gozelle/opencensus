@@ -6,9 +6,9 @@ import (
 	"sync"
 	"time"
 	
-	"github.com/gozelle/opencensus-go/metric"
-	"github.com/gozelle/opencensus-go/metric/metricdata"
-	"github.com/gozelle/opencensus-go/metric/metricproducer"
+	"github.com/gozelle/opencensus/metric"
+	"github.com/gozelle/opencensus/metric/metricdata"
+	"github.com/gozelle/opencensus/metric/metricproducer"
 )
 
 type (
@@ -630,6 +630,6 @@ func (p *producer) createInt64DerivedCumulative(name string, description string,
 	if err != nil {
 		return nil, errors.New("error creating gauge for " + name + ": " + err.Error())
 	}
-
+	
 	return cumulative, nil
 }

@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package internal // import "github.com/gozelle/opencensus-go/internal"
+package internal // import "github.com/gozelle/opencensus/internal"
 
 import (
 	"fmt"
 	"time"
 	
-	opencensus "github.com/gozelle/opencensus-go"
+	opencensus "github.com/gozelle/opencensus"
 )
 
 // UserAgent is the user agent to be added to the outgoing

@@ -17,8 +17,8 @@ package view_test
 import (
 	"log"
 	
-	"github.com/gozelle/opencensus-go/stats"
-	"github.com/gozelle/opencensus-go/stats/view"
+	"github.com/gozelle/opencensus/stats"
+	"github.com/gozelle/opencensus/stats/view"
 )
 
 func Example() {

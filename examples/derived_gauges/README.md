@@ -36,13 +36,13 @@ Enter different value for number of items to queue and fetch the metrics using a
 ## Run the example
 
 ```
-$ go get github.com/gozelle/opencensus-go/examples/derived_gauges/...
+$ go get github.com/gozelle/opencensus/examples/derived_gauges/...
 ```
 
 then:
 
 ```
-$ go run $(go env GOPATH)/src/github.com/gozelle/opencensus-go/examples/derived_gauges/derived_gauge.go
+$ go run $(go env GOPATH)/src/github.com/gozelle/opencensus/examples/derived_gauges/derived_gauge.go
 ```
 
 ## How to use derived gauges?
@@ -166,10 +166,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/gozelle/opencensus-go/examples/exporter"
-	"github.com/gozelle/opencensus-go/metric"
-	"github.com/gozelle/opencensus-go/metric/metricdata"
-	"github.com/gozelle/opencensus-go/metric/metricproducer"
+	"github.com/gozelle/opencensus/examples/exporter"
+	"github.com/gozelle/opencensus/metric"
+	"github.com/gozelle/opencensus/metric/metricdata"
+	"github.com/gozelle/opencensus/metric/metricproducer"
 )
 
 const (

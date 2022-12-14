@@ -20,13 +20,13 @@ import (
 	"sync"
 	"time"
 	
-	"github.com/gozelle/opencensus-go/resource"
+	"github.com/gozelle/opencensus/resource"
 	
-	"github.com/gozelle/opencensus-go/metric/metricdata"
-	"github.com/gozelle/opencensus-go/metric/metricproducer"
-	"github.com/gozelle/opencensus-go/stats"
-	"github.com/gozelle/opencensus-go/stats/internal"
-	"github.com/gozelle/opencensus-go/tag"
+	"github.com/gozelle/opencensus/metric/metricdata"
+	"github.com/gozelle/opencensus/metric/metricproducer"
+	"github.com/gozelle/opencensus/stats"
+	"github.com/gozelle/opencensus/stats/internal"
+	"github.com/gozelle/opencensus/tag"
 )
 
 func init() {
@@ -419,6 +419,6 @@ func (w *worker) RegisterExporter(e Exporter) {
 func (w *worker) UnregisterExporter(e Exporter) {
 	w.exportersMu.Lock()
 	defer w.exportersMu.Unlock()
-
+	
 	delete(w.exporters, e)
 }

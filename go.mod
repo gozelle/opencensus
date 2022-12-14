@@ -1,4 +1,4 @@
-module github.com/gozelle/opencensus-go
+module github.com/gozelle/opencensus
 
 require (
 	github.com/golang/groupcache v0.0.0-20200121045136-8c9f03a8e57e

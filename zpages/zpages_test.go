@@ -25,7 +25,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	
-	"github.com/gozelle/opencensus-go/trace"
+	"github.com/gozelle/opencensus/trace"
 )
 
 var (

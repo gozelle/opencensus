@@ -19,7 +19,7 @@ import (
 	"sync"
 	"time"
 	
-	"github.com/gozelle/opencensus-go/metric/metricdata"
+	"github.com/gozelle/opencensus/metric/metricdata"
 )
 
 // Registry creates and manages a set of gauges and cumulative.

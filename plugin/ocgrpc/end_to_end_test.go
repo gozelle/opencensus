@@ -21,10 +21,10 @@ import (
 	"reflect"
 	"testing"
 	
-	"github.com/gozelle/opencensus-go/internal/testpb"
-	"github.com/gozelle/opencensus-go/plugin/ocgrpc"
-	"github.com/gozelle/opencensus-go/stats/view"
-	"github.com/gozelle/opencensus-go/tag"
+	"github.com/gozelle/opencensus/internal/testpb"
+	"github.com/gozelle/opencensus/plugin/ocgrpc"
+	"github.com/gozelle/opencensus/stats/view"
+	"github.com/gozelle/opencensus/tag"
 )
 
 var keyAccountId = tag.MustNewKey("account_id")

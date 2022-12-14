@@ -18,9 +18,9 @@ import (
 	"sync"
 	"time"
 	
-	"github.com/gozelle/opencensus-go/internal/tagencoding"
+	"github.com/gozelle/opencensus/internal/tagencoding"
 	
-	"github.com/gozelle/opencensus-go/metric/metricdata"
+	"github.com/gozelle/opencensus/metric/metricdata"
 )
 
 // baseMetric is common representation for gauge and cumulative metrics.

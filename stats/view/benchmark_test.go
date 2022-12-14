@@ -21,8 +21,8 @@ import (
 	"testing"
 	"time"
 	
-	"github.com/gozelle/opencensus-go/stats"
-	"github.com/gozelle/opencensus-go/tag"
+	"github.com/gozelle/opencensus/stats"
+	"github.com/gozelle/opencensus/tag"
 )
 
 var (
@@ -112,6 +112,6 @@ func prepareContexts(tagCount int) []context.Context {
 		)
 		ctxs = append(ctxs, ctx)
 	}
-
+	
 	return ctxs
 }

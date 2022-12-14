@@ -13,14 +13,14 @@
 // limitations under the License.
 
 // Package readme generates the README.
-package readme // import "github.com/gozelle/opencensus-go/internal/readme"
+package readme // import "github.com/gozelle/opencensus/internal/readme"
 
 import (
 	"context"
 	"log"
 	
-	"github.com/gozelle/opencensus-go/stats"
-	"github.com/gozelle/opencensus-go/stats/view"
+	"github.com/gozelle/opencensus/stats"
+	"github.com/gozelle/opencensus/stats/view"
 )
 
 // README.md is generated with the examples here by using embedmd.

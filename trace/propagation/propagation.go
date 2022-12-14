@@ -13,7 +13,7 @@
 // limitations under the License.
 
 // Package propagation implements the binary trace context format.
-package propagation // import "github.com/gozelle/opencensus-go/trace/propagation"
+package propagation // import "github.com/gozelle/opencensus/trace/propagation"
 
 // TODO: link to external spec document.
 
@@ -48,7 +48,7 @@ package propagation // import "github.com/gozelle/opencensus-go/trace/propagatio
 import (
 	"net/http"
 	
-	"github.com/gozelle/opencensus-go/trace"
+	"github.com/gozelle/opencensus/trace"
 )
 
 // Binary returns the binary format representation of a SpanContext.

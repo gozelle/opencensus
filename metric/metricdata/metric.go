@@ -17,7 +17,7 @@ package metricdata
 import (
 	"time"
 	
-	"github.com/gozelle/opencensus-go/resource"
+	"github.com/gozelle/opencensus/resource"
 )
 
 // Descriptor holds metadata about a metric.
