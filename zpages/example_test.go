@@ -17,8 +17,8 @@ package zpages_test
 import (
 	"log"
 	"net/http"
-
-	"go.opencensus.io/zpages"
+	
+	"github.com/gozelle/opencensus-go/zpages"
 )
 
 func Example() {

@@ -17,8 +17,8 @@ package trace
 import (
 	"sync"
 	"time"
-
-	"go.opencensus.io/internal"
+	
+	"github.com/gozelle/opencensus-go/internal"
 )
 
 const (
@@ -287,7 +287,7 @@ func (s *spanStore) finished(span SpanInterface, sd *SpanData) {
 		latency = 0
 	}
 	code := sd.Status.Code
-
+	
 	s.mu.Lock()
 	delete(s.active, span)
 	if code == 0 {

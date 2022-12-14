@@ -23,10 +23,10 @@ import (
 	"sort"
 	"sync/atomic"
 	"time"
-
-	"go.opencensus.io/metric/metricdata"
-	"go.opencensus.io/stats"
-	"go.opencensus.io/tag"
+	
+	"github.com/gozelle/opencensus-go/metric/metricdata"
+	"github.com/gozelle/opencensus-go/stats"
+	"github.com/gozelle/opencensus-go/tag"
 )
 
 // View allows users to aggregate the recorded stats.Measurements.
@@ -35,14 +35,14 @@ import (
 type View struct {
 	Name        string // Name of View. Must be unique. If unset, will default to the name of the Measure.
 	Description string // Description is a human-readable description for this view.
-
+	
 	// TagKeys are the tag keys describing the grouping of this view.
 	// A single Row will be produced for each combination of associated tag values.
 	TagKeys []tag.Key
-
+	
 	// Measure is a stats.Measure to aggregate in this view.
 	Measure stats.Measure
-
+	
 	// Aggregation is the aggregation function to apply to the set of Measurements.
 	Aggregation *Aggregation
 }
@@ -102,7 +102,7 @@ func (v *View) canonicalize() error {
 	}
 	// drop 0 bucket silently.
 	v.Aggregation.Buckets = dropZeroBounds(v.Aggregation.Buckets...)
-
+	
 	return nil
 }
 

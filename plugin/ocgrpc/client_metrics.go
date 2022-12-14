@@ -16,9 +16,9 @@
 package ocgrpc
 
 import (
-	"go.opencensus.io/stats"
-	"go.opencensus.io/stats/view"
-	"go.opencensus.io/tag"
+	"github.com/gozelle/opencensus-go/stats"
+	"github.com/gozelle/opencensus-go/stats/view"
+	"github.com/gozelle/opencensus-go/tag"
 )
 
 // The following variables are measures are recorded by ClientHandler:
@@ -44,7 +44,7 @@ var (
 		TagKeys:     []tag.Key{KeyClientMethod},
 		Aggregation: DefaultBytesDistribution,
 	}
-
+	
 	ClientReceivedBytesPerRPCView = &view.View{
 		Measure:     ClientReceivedBytesPerRPC,
 		Name:        "grpc.io/client/received_bytes_per_rpc",
@@ -52,7 +52,7 @@ var (
 		TagKeys:     []tag.Key{KeyClientMethod},
 		Aggregation: DefaultBytesDistribution,
 	}
-
+	
 	ClientRoundtripLatencyView = &view.View{
 		Measure:     ClientRoundtripLatency,
 		Name:        "grpc.io/client/roundtrip_latency",
@@ -60,7 +60,7 @@ var (
 		TagKeys:     []tag.Key{KeyClientMethod},
 		Aggregation: DefaultMillisecondsDistribution,
 	}
-
+	
 	// Purposely reuses the count from `ClientRoundtripLatency`, tagging
 	// with method and status to result in ClientCompletedRpcs.
 	ClientCompletedRPCsView = &view.View{
@@ -70,7 +70,7 @@ var (
 		TagKeys:     []tag.Key{KeyClientMethod, KeyClientStatus},
 		Aggregation: view.Count(),
 	}
-
+	
 	ClientStartedRPCsView = &view.View{
 		Measure:     ClientStartedRPCs,
 		Name:        "grpc.io/client/started_rpcs",
@@ -78,7 +78,7 @@ var (
 		TagKeys:     []tag.Key{KeyClientMethod},
 		Aggregation: view.Count(),
 	}
-
+	
 	ClientSentMessagesPerRPCView = &view.View{
 		Measure:     ClientSentMessagesPerRPC,
 		Name:        "grpc.io/client/sent_messages_per_rpc",
@@ -86,7 +86,7 @@ var (
 		TagKeys:     []tag.Key{KeyClientMethod},
 		Aggregation: DefaultMessageCountDistribution,
 	}
-
+	
 	ClientReceivedMessagesPerRPCView = &view.View{
 		Measure:     ClientReceivedMessagesPerRPC,
 		Name:        "grpc.io/client/received_messages_per_rpc",
@@ -94,7 +94,7 @@ var (
 		TagKeys:     []tag.Key{KeyClientMethod},
 		Aggregation: DefaultMessageCountDistribution,
 	}
-
+	
 	ClientServerLatencyView = &view.View{
 		Measure:     ClientServerLatency,
 		Name:        "grpc.io/client/server_latency",

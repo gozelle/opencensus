@@ -16,9 +16,9 @@
 package ocgrpc
 
 import (
-	"go.opencensus.io/stats"
-	"go.opencensus.io/stats/view"
-	"go.opencensus.io/tag"
+	"github.com/gozelle/opencensus-go/stats"
+	"github.com/gozelle/opencensus-go/stats/view"
+	"github.com/gozelle/opencensus-go/tag"
 )
 
 // The following variables are measures are recorded by ServerHandler:
@@ -47,7 +47,7 @@ var (
 		TagKeys:     []tag.Key{KeyServerMethod},
 		Aggregation: DefaultBytesDistribution,
 	}
-
+	
 	ServerSentBytesPerRPCView = &view.View{
 		Name:        "grpc.io/server/sent_bytes_per_rpc",
 		Description: "Distribution of total sent bytes per RPC, by method.",
@@ -55,7 +55,7 @@ var (
 		TagKeys:     []tag.Key{KeyServerMethod},
 		Aggregation: DefaultBytesDistribution,
 	}
-
+	
 	ServerLatencyView = &view.View{
 		Name:        "grpc.io/server/server_latency",
 		Description: "Distribution of server latency in milliseconds, by method.",
@@ -63,7 +63,7 @@ var (
 		Measure:     ServerLatency,
 		Aggregation: DefaultMillisecondsDistribution,
 	}
-
+	
 	// Purposely reuses the count from `ServerLatency`, tagging
 	// with method and status to result in ServerCompletedRpcs.
 	ServerCompletedRPCsView = &view.View{
@@ -73,7 +73,7 @@ var (
 		Measure:     ServerLatency,
 		Aggregation: view.Count(),
 	}
-
+	
 	ServerStartedRPCsView = &view.View{
 		Measure:     ServerStartedRPCs,
 		Name:        "grpc.io/server/started_rpcs",
@@ -81,7 +81,7 @@ var (
 		TagKeys:     []tag.Key{KeyServerMethod},
 		Aggregation: view.Count(),
 	}
-
+	
 	ServerReceivedMessagesPerRPCView = &view.View{
 		Name:        "grpc.io/server/received_messages_per_rpc",
 		Description: "Distribution of messages received count per RPC, by method.",
@@ -89,7 +89,7 @@ var (
 		Measure:     ServerReceivedMessagesPerRPC,
 		Aggregation: DefaultMessageCountDistribution,
 	}
-
+	
 	ServerSentMessagesPerRPCView = &view.View{
 		Name:        "grpc.io/server/sent_messages_per_rpc",
 		Description: "Distribution of messages sent count per RPC, by method.",

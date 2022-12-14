@@ -19,9 +19,9 @@ import (
 	"regexp"
 	"strings"
 	"testing"
-
-	"go.opencensus.io/stats"
-	"go.opencensus.io/stats/view"
+	
+	"github.com/gozelle/opencensus-go/stats"
+	"github.com/gozelle/opencensus-go/stats/view"
 )
 
 var colSep = regexp.MustCompile(`\s*\|\s*`)
@@ -36,7 +36,7 @@ func TestSpecClientMeasures(t *testing.T) {
 | grpc.io/client/received_bytes_per_rpc    | By   | Total bytes received across all response messages per RPC.                                  |
 | grpc.io/client/roundtrip_latency         | ms   | Time between first byte of request sent to last byte of response received, or terminal error. |
 | grpc.io/client/server_latency            | ms   | Propagated from the server and should have the same value as "grpc.io/server/latency".        |`
-
+	
 	lines := strings.Split(spec, "\n")[3:]
 	type measureDef struct {
 		name string
@@ -51,7 +51,7 @@ func TestSpecClientMeasures(t *testing.T) {
 		}
 		measureDefs = append(measureDefs, measureDef{cols[0], cols[1], cols[2]})
 	}
-
+	
 	gotMeasures := []stats.Measure{
 		ClientSentMessagesPerRPC,
 		ClientSentBytesPerRPC,
@@ -60,11 +60,11 @@ func TestSpecClientMeasures(t *testing.T) {
 		ClientRoundtripLatency,
 		ClientServerLatency,
 	}
-
+	
 	if got, want := len(gotMeasures), len(measureDefs); got != want {
 		t.Fatalf("len(gotMeasures) = %d; want %d", got, want)
 	}
-
+	
 	for i, m := range gotMeasures {
 		defn := measureDefs[i]
 		if got, want := m.Name(), defn.name; got != want {
@@ -87,14 +87,14 @@ func TestSpecClientViews(t *testing.T) {
 | grpc.io/client/received_bytes_per_rpc | received_bytes_per_rpc | distribution | client_method                |
 | grpc.io/client/roundtrip_latency      | roundtrip_latency      | distribution | client_method                |
 | grpc.io/client/completed_rpcs         | roundtrip_latency      | count        | client_method, client_status |`
-
+	
 	extraViewsSpec := `
 | View name                                | Measure suffix            | Aggregation  | Tags suffix   |
 |------------------------------------------|---------------------------|--------------|---------------|
 | grpc.io/client/sent_messages_per_rpc     | sent_messages_per_rpc     | distribution | client_method |
 | grpc.io/client/received_messages_per_rpc | received_messages_per_rpc | distribution | client_method |
 | grpc.io/client/server_latency            | server_latency            | distribution | client_method |`
-
+	
 	lines := strings.Split(defaultViewsSpec, "\n")[3:]
 	lines = append(lines, strings.Split(extraViewsSpec, "\n")[3:]...)
 	type viewDef struct {
@@ -111,14 +111,14 @@ func TestSpecClientViews(t *testing.T) {
 		}
 		viewDefs = append(viewDefs, viewDef{cols[0], cols[1], cols[2], cols[3]})
 	}
-
+	
 	views := DefaultClientViews
 	views = append(views, ClientSentMessagesPerRPCView, ClientReceivedMessagesPerRPCView, ClientServerLatencyView)
-
+	
 	if got, want := len(views), len(viewDefs); got != want {
 		t.Fatalf("len(gotMeasures) = %d; want %d", got, want)
 	}
-
+	
 	for i, v := range views {
 		defn := viewDefs[i]
 		if got, want := v.Name, defn.name; got != want {

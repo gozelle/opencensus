@@ -18,8 +18,8 @@ import (
 	"bytes"
 	"fmt"
 	"testing"
-
-	. "go.opencensus.io/trace"
+	
+	. "github.com/gozelle/opencensus-go/trace"
 )
 
 func TestBinary(t *testing.T) {
@@ -36,7 +36,7 @@ func TestBinary(t *testing.T) {
 	}); !bytes.Equal(b2, b) {
 		t.Errorf("Binary: got serialization %02x want %02x", b2, b)
 	}
-
+	
 	sc, ok := FromBinary(b)
 	if !ok {
 		t.Errorf("FromBinary: got ok==%t, want true", ok)
@@ -47,19 +47,19 @@ func TestBinary(t *testing.T) {
 	if got := sc.SpanID; got != sid {
 		t.Errorf("FromBinary: got span ID %s want %s", got, sid)
 	}
-
+	
 	b[0] = 1
 	sc, ok = FromBinary(b)
 	if ok {
 		t.Errorf("FromBinary: decoding bytes containing an unsupported version: got ok==%t want false", ok)
 	}
-
+	
 	b = []byte{0, 1, 97, 98, 99, 100, 101, 102, 103, 104, 2, 1}
 	sc, ok = FromBinary(b)
 	if ok {
 		t.Errorf("FromBinary: decoding bytes without a TraceID: got ok==%t want false", ok)
 	}
-
+	
 	if b := Binary(SpanContext{}); b != nil {
 		t.Errorf("Binary(SpanContext{}): got serialization %02x want nil", b)
 	}

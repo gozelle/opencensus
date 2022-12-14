@@ -40,11 +40,11 @@ import (
 	"strconv"
 	"strings"
 	"time"
-
-	"go.opencensus.io/examples/exporter"
-	"go.opencensus.io/metric"
-	"go.opencensus.io/metric/metricdata"
-	"go.opencensus.io/metric/metricproducer"
+	
+	"github.com/gozelle/opencensus-go/examples/exporter"
+	"github.com/gozelle/opencensus-go/metric"
+	"github.com/gozelle/opencensus-go/metric/metricdata"
+	"github.com/gozelle/opencensus-go/metric/metricproducer"
 )
 
 const (
@@ -136,7 +136,7 @@ func work() {
 	fmt.Printf("\nGo to file://%s to see the metrics. OR do `tail -f %s` in another terminal\n\n\n",
 		metricsLogFile, metricsLogFile)
 	fmt.Printf("Enter memory you would like to allocate in MB to change the value of above metrics.\n")
-
+	
 	// Do some work and record gauge metrics.
 	for {
 		sizeMB := getInput()
@@ -157,13 +157,13 @@ func main() {
 	exporter.Start()
 	defer exporter.Stop()
 	defer exporter.Close()
-
+	
 	// Create metric registry and register it with global producer manager.
 	// START reg
 	r := metric.NewRegistry()
 	metricproducer.GlobalManager().AddProducer(r)
 	// END reg
-
+	
 	// Create Int64Gauge to report memory usage of a process.
 	// START alloc
 	allocGauge, err := r.AddInt64Gauge(
@@ -174,14 +174,14 @@ func main() {
 		log.Fatalf("error creating heap allocation gauge, error %v\n", err)
 	}
 	// END alloc
-
+	
 	// START entryAlloc
 	allocEntry, err = allocGauge.GetEntry()
 	if err != nil {
 		log.Fatalf("error getting heap allocation gauge entry, error %v\n", err)
 	}
 	// END entryAlloc
-
+	
 	// Create Float64Gauge to report fractional cpu consumed by Garbage Collection.
 	// START idle
 	ratioGauge, err := r.AddFloat64Gauge(
@@ -192,23 +192,23 @@ func main() {
 		log.Fatalf("error creating process heap idle to allocate ratio gauge, error %v\n", err)
 	}
 	// END idle
-
+	
 	// START entryIdle
 	ratioEntry, err = ratioGauge.GetEntry()
 	if err != nil {
 		log.Fatalf("error getting process heap idle to allocate ratio gauge entry, error %v\n", err)
 	}
 	// END entryIdle
-
+	
 	// record gauge metrics every 5 seconds. This example records the gauges periodically. However,
 	// depending on the application it can be non-periodic and can be recorded at any time.
 	done := make(chan int)
 	defer close(done)
 	go recordMetrics(1, done)
-
+	
 	// do your work.
 	work()
-
+	
 }
 
 // END entire

@@ -18,8 +18,8 @@ package view
 import (
 	"math"
 	"time"
-
-	"go.opencensus.io/metric/metricdata"
+	
+	"github.com/gozelle/opencensus-go/metric/metricdata"
 )
 
 // AggregationData represents an aggregated value from a collection.
@@ -60,7 +60,7 @@ func (a *CountData) equal(other AggregationData) bool {
 	if !ok {
 		return false
 	}
-
+	
 	return a.Start.Equal(a2.Start) && a.Value == a2.Value
 }
 
@@ -176,12 +176,12 @@ func (a *DistributionData) addSample(v float64, attachments map[string]interface
 	}
 	a.Count++
 	a.addToBucket(v, attachments, t)
-
+	
 	if a.Count == 1 {
 		a.Mean = v
 		return
 	}
-
+	
 	oldMean := a.Mean
 	a.Mean = a.Mean + (v-a.Mean)/float64(a.Count)
 	a.SumOfSquaredDev = a.SumOfSquaredDev + (v-oldMean)*(v-a.Mean)
@@ -259,7 +259,7 @@ func (a *DistributionData) toPoint(metricType metricdata.Type, t time.Time) metr
 			})
 		}
 		bucketOptions := &metricdata.BucketOptions{Bounds: a.bounds}
-
+		
 		val := &metricdata.Distribution{
 			Count:                 a.Count,
 			Sum:                   a.Sum(),
@@ -268,7 +268,7 @@ func (a *DistributionData) toPoint(metricType metricdata.Type, t time.Time) metr
 			Buckets:               buckets,
 		}
 		return metricdata.NewDistributionPoint(t, val)
-
+	
 	default:
 		// TODO: [rghetia] when we have a use case for TypeGaugeDistribution.
 		panic("unsupported metricdata.Type")

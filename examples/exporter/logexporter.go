@@ -14,7 +14,7 @@
 
 // Package exporter contains a log exporter that supports exporting
 // OpenCensus metrics and spans to a logging framework.
-package exporter // import "go.opencensus.io/examples/exporter"
+package exporter // import "github.com/gozelle/opencensus-go/examples/exporter"
 
 import (
 	"context"
@@ -24,10 +24,10 @@ import (
 	"os"
 	"sync"
 	"time"
-
-	"go.opencensus.io/metric/metricdata"
-	"go.opencensus.io/metric/metricexport"
-	"go.opencensus.io/trace"
+	
+	"github.com/gozelle/opencensus-go/metric/metricdata"
+	"github.com/gozelle/opencensus-go/metric/metricexport"
+	"github.com/gozelle/opencensus-go/trace"
 )
 
 // LogExporter exports metrics and span to log file
@@ -47,11 +47,11 @@ type Options struct {
 	// ReportingInterval is a time interval between two successive metrics
 	// export.
 	ReportingInterval time.Duration
-
+	
 	// MetricsLogFile is path where exported metrics are logged.
 	// If it is nil then the metrics are logged on console
 	MetricsLogFile string
-
+	
 	// TracesLogFile is path where exported span data are logged.
 	// If it is nil then the span data are logged on console
 	TracesLogFile string
@@ -171,12 +171,12 @@ func (e *LogExporter) ExportSpan(sd *trace.SpanData) {
 	if !reZero.MatchString(parentSpanID) {
 		e.tLogger.Println("ParentSpanID:", parentSpanID)
 	}
-
+	
 	e.tLogger.Println()
 	e.tLogger.Printf("Span:    %v\n", sd.Name)
 	e.tLogger.Printf("Status:  %v [%v]\n", sd.Status.Message, sd.Status.Code)
 	e.tLogger.Printf("Elapsed: %v\n", sd.EndTime.Sub(sd.StartTime).Round(time.Millisecond))
-
+	
 	spanKinds := map[int]string{
 		1: "Server",
 		2: "Client",
@@ -184,7 +184,7 @@ func (e *LogExporter) ExportSpan(sd *trace.SpanData) {
 	if spanKind, ok := spanKinds[sd.SpanKind]; ok {
 		e.tLogger.Printf("SpanKind: %s\n", spanKind)
 	}
-
+	
 	if len(sd.Annotations) > 0 {
 		e.tLogger.Println()
 		e.tLogger.Println("Annotations:")
@@ -196,7 +196,7 @@ func (e *LogExporter) ExportSpan(sd *trace.SpanData) {
 			e.tLogger.Println()
 		}
 	}
-
+	
 	if len(sd.Attributes) > 0 {
 		e.tLogger.Println()
 		e.tLogger.Println("Attributes:")
@@ -204,7 +204,7 @@ func (e *LogExporter) ExportSpan(sd *trace.SpanData) {
 			e.tLogger.Printf("%v- %v=%v\n", indent, k, v)
 		}
 	}
-
+	
 	if len(sd.MessageEvents) > 0 {
 		eventTypes := map[trace.MessageEventType]string{
 			trace.MessageEventTypeSent: "Sent",

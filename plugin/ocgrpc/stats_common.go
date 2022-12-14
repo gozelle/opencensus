@@ -21,12 +21,12 @@ import (
 	"strings"
 	"sync/atomic"
 	"time"
-
-	"go.opencensus.io/metric/metricdata"
-	ocstats "go.opencensus.io/stats"
-	"go.opencensus.io/stats/view"
-	"go.opencensus.io/tag"
-	"go.opencensus.io/trace"
+	
+	"github.com/gozelle/opencensus-go/metric/metricdata"
+	ocstats "github.com/gozelle/opencensus-go/stats"
+	"github.com/gozelle/opencensus-go/stats/view"
+	"github.com/gozelle/opencensus-go/tag"
+	"github.com/gozelle/opencensus-go/trace"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/grpclog"
 	"google.golang.org/grpc/stats"
@@ -42,7 +42,7 @@ type rpcData struct {
 	// reqCount and respCount has to be the first words
 	// in order to be 64-aligned on 32-bit architectures.
 	sentCount, sentBytes, recvCount, recvBytes int64 // access atomically
-
+	
 	// startTime represents the time at which TagRPC was invoked at the
 	// beginning of an RPC. It is an appoximation of the time when the
 	// application code invoked GRPC code.
@@ -104,7 +104,7 @@ func handleRPCBegin(ctx context.Context, s *stats.Begin) {
 			grpclog.Infoln("Failed to retrieve *rpcData from context.")
 		}
 	}
-
+	
 	if s.IsClient() {
 		ocstats.RecordWithOptions(ctx,
 			ocstats.WithTags(tag.Upsert(KeyClientMethod, methodName(d.method))),
@@ -124,7 +124,7 @@ func handleRPCOutPayload(ctx context.Context, s *stats.OutPayload) {
 		}
 		return
 	}
-
+	
 	atomic.AddInt64(&d.sentBytes, int64(s.Length))
 	atomic.AddInt64(&d.sentCount, 1)
 }
@@ -137,7 +137,7 @@ func handleRPCInPayload(ctx context.Context, s *stats.InPayload) {
 		}
 		return
 	}
-
+	
 	atomic.AddInt64(&d.recvBytes, int64(s.Length))
 	atomic.AddInt64(&d.recvCount, 1)
 }
@@ -150,9 +150,9 @@ func handleRPCEnd(ctx context.Context, s *stats.End) {
 		}
 		return
 	}
-
+	
 	elapsedTime := time.Since(d.startTime)
-
+	
 	var st string
 	if s.Error != nil {
 		s, ok := status.FromError(s.Error)
@@ -162,7 +162,7 @@ func handleRPCEnd(ctx context.Context, s *stats.End) {
 	} else {
 		st = "OK"
 	}
-
+	
 	latencyMillis := float64(elapsedTime) / float64(time.Millisecond)
 	attachments := getSpanCtxAttachment(ctx)
 	if s.Client {

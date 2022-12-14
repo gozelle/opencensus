@@ -16,10 +16,10 @@ package ocgrpc
 
 import (
 	"context"
-
+	
 	"google.golang.org/grpc/stats"
-
-	"go.opencensus.io/trace"
+	
+	"github.com/gozelle/opencensus-go/trace"
 )
 
 // ServerHandler implements gRPC stats.Handler recording OpenCensus stats and
@@ -39,7 +39,7 @@ type ServerHandler struct {
 	// server, callers will be able to send tracing metadata in gRPC headers
 	// and trigger traces in your backend.
 	IsPublicEndpoint bool
-
+	
 	// StartOptions to use for to spans started around RPCs handled by this server.
 	//
 	// These will apply even if there is tracing metadata already

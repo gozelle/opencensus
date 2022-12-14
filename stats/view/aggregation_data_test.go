@@ -19,10 +19,10 @@ import (
 	"reflect"
 	"testing"
 	"time"
-
+	
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
-	"go.opencensus.io/metric/metricdata"
+	"github.com/gozelle/opencensus-go/metric/metricdata"
 )
 
 func TestDataClone(t *testing.T) {
@@ -36,7 +36,7 @@ func TestDataClone(t *testing.T) {
 	dist.CountPerBucket = []int64{0, 2, 3, 2}
 	dist.Mean = 4
 	dist.SumOfSquaredDev = 1.2
-
+	
 	tests := []struct {
 		name string
 		src  AggregationData
@@ -76,7 +76,7 @@ func TestDistributionData_addSample(t *testing.T) {
 	attachments1 := map[string]interface{}{"key1": "value1"}
 	t1 := time.Now()
 	dd.addSample(0.5, attachments1, t1)
-
+	
 	e1 := &metricdata.Exemplar{Value: 0.5, Timestamp: t1, Attachments: attachments1}
 	want := &DistributionData{
 		Count:              1,
@@ -90,11 +90,11 @@ func TestDistributionData_addSample(t *testing.T) {
 	if diff := cmpDD(dd, want); diff != "" {
 		t.Fatalf("Unexpected DistributionData -got +want: %s", diff)
 	}
-
+	
 	attachments2 := map[string]interface{}{"key2": "value2"}
 	t2 := t1.Add(time.Microsecond)
 	dd.addSample(0.7, attachments2, t2)
-
+	
 	// Previous exemplar should be overwritten.
 	e2 := &metricdata.Exemplar{Value: 0.7, Timestamp: t2, Attachments: attachments2}
 	want = &DistributionData{
@@ -109,11 +109,11 @@ func TestDistributionData_addSample(t *testing.T) {
 	if diff := cmpDD(dd, want); diff != "" {
 		t.Fatalf("Unexpected DistributionData -got +want: %s", diff)
 	}
-
+	
 	attachments3 := map[string]interface{}{"key3": "value3"}
 	t3 := t2.Add(time.Microsecond)
 	dd.addSample(1.2, attachments3, t3)
-
+	
 	// e3 is at another bucket. e2 should still be there.
 	e3 := &metricdata.Exemplar{Value: 1.2, Timestamp: t3, Attachments: attachments3}
 	want = &DistributionData{

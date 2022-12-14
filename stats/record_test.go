@@ -20,15 +20,15 @@ import (
 	"reflect"
 	"testing"
 	"time"
-
+	
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
-
-	"go.opencensus.io/metric/metricdata"
-	"go.opencensus.io/stats"
-	"go.opencensus.io/stats/view"
-	"go.opencensus.io/tag"
-	"go.opencensus.io/trace"
+	
+	"github.com/gozelle/opencensus-go/metric/metricdata"
+	"github.com/gozelle/opencensus-go/stats"
+	"github.com/gozelle/opencensus-go/stats/view"
+	"github.com/gozelle/opencensus-go/tag"
+	"github.com/gozelle/opencensus-go/trace"
 )
 
 var (
@@ -57,7 +57,7 @@ func TestRecordWithAttachments(t *testing.T) {
 		log.Fatalf("Failed to register views: %v", err)
 	}
 	defer view.Unregister(v)
-
+	
 	attachments := map[string]interface{}{metricdata.AttachmentKeySpanContext: spanCtx}
 	stats.RecordWithOptions(context.Background(), stats.WithAttachments(attachments), stats.WithMeasurements(m.M(12)))
 	rows, err := view.RetrieveData("test_view")
@@ -119,7 +119,7 @@ func TestRecordWithMeter(t *testing.T) {
 		t.Fatalf("Failed to register view: %v", err)
 	}
 	defer meter.Unregister(v...)
-
+	
 	attachments := map[string]interface{}{metricdata.AttachmentKeySpanContext: spanCtx}
 	ctx, err := tag.New(context.Background(), tag.Insert(k1, "foo"), tag.Insert(k2, "foo"))
 	if err != nil {
@@ -133,7 +133,7 @@ func TestRecordWithMeter(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to resolve data point: %v", err)
 	}
-
+	
 	rows, err := meter.RetrieveData("test_view")
 	if err != nil {
 		t.Fatalf("Unable to retrieve data for test_view: %v", err)
@@ -153,7 +153,7 @@ func TestRecordWithMeter(t *testing.T) {
 		if tag.Value != wantTags[i].Value {
 			t.Errorf("Incorrect tag for %s, want: %q, got: %v", tag.Key, wantTags[i].Value, tag.Value)
 		}
-
+		
 	}
 	wantBuckets := []int64{0, 1, 1}
 	gotBuckets := rows[0].Data.(*view.DistributionData)
@@ -174,7 +174,7 @@ func TestRecordWithMeter(t *testing.T) {
 			t.Errorf("Bad exemplar for %d: %+v", i, diff)
 		}
 	}
-
+	
 	rows2, err := meter.RetrieveData("second_view")
 	if err != nil {
 		t.Fatalf("Failed to read second_view: %v", err)

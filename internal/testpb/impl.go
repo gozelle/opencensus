@@ -21,9 +21,9 @@ import (
 	"net"
 	"testing"
 	"time"
-
-	"go.opencensus.io/plugin/ocgrpc"
-	"go.opencensus.io/trace"
+	
+	"github.com/gozelle/opencensus-go/plugin/ocgrpc"
+	"github.com/gozelle/opencensus-go/trace"
 	"google.golang.org/grpc"
 )
 
@@ -72,19 +72,19 @@ func NewTestClient(l *testing.T) (client FooClient, cleanup func()) {
 	server := grpc.NewServer(grpc.StatsHandler(&ocgrpc.ServerHandler{}))
 	RegisterFooServer(server, &testServer{})
 	go server.Serve(listener)
-
+	
 	// Initialize client.
 	clientConn, err := grpc.Dial(
 		listener.Addr().String(),
 		grpc.WithInsecure(),
 		grpc.WithStatsHandler(&ocgrpc.ClientHandler{}),
 		grpc.WithBlock())
-
+	
 	if err != nil {
 		l.Fatal(err)
 	}
 	client = NewFooClient(clientConn)
-
+	
 	cleanup = func() {
 		server.GracefulStop()
 		clientConn.Close()

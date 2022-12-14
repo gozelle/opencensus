@@ -18,8 +18,8 @@ package ocgrpc
 import (
 	"context"
 	"time"
-
-	"go.opencensus.io/tag"
+	
+	"github.com/gozelle/opencensus-go/tag"
 	"google.golang.org/grpc/grpclog"
 	"google.golang.org/grpc/stats"
 )
@@ -34,7 +34,7 @@ func (h *ClientHandler) statsTagRPC(ctx context.Context, info *stats.RPCTagInfo)
 		}
 		return ctx
 	}
-
+	
 	d := &rpcData{
 		startTime: startTime,
 		method:    info.FullMethodName,
@@ -44,6 +44,6 @@ func (h *ClientHandler) statsTagRPC(ctx context.Context, info *stats.RPCTagInfo)
 		encoded := tag.Encode(ts)
 		ctx = stats.SetTags(ctx, encoded)
 	}
-
+	
 	return context.WithValue(ctx, rpcDataKey, d)
 }

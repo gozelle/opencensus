@@ -19,14 +19,14 @@ import (
 	"fmt"
 	"sync"
 	"time"
-
-	"go.opencensus.io/resource"
-
-	"go.opencensus.io/metric/metricdata"
-	"go.opencensus.io/metric/metricproducer"
-	"go.opencensus.io/stats"
-	"go.opencensus.io/stats/internal"
-	"go.opencensus.io/tag"
+	
+	"github.com/gozelle/opencensus-go/resource"
+	
+	"github.com/gozelle/opencensus-go/metric/metricdata"
+	"github.com/gozelle/opencensus-go/metric/metricproducer"
+	"github.com/gozelle/opencensus-go/stats"
+	"github.com/gozelle/opencensus-go/stats/internal"
+	"github.com/gozelle/opencensus-go/tag"
 )
 
 func init() {
@@ -45,13 +45,13 @@ type worker struct {
 	measures       map[string]*measureRef
 	views          map[string]*viewInternal
 	viewStartTimes map[*viewInternal]time.Time
-
+	
 	timer      *time.Ticker
 	c          chan command
 	quit, done chan bool
 	mu         sync.RWMutex
 	r          *resource.Resource
-
+	
 	exportersMu sync.RWMutex
 	exporters   map[Exporter]struct{}
 }
@@ -84,7 +84,7 @@ type Meter interface {
 	// duration is. For example, the Stackdriver exporter recommends a value no
 	// lower than 1 minute. Consult each exporter per your needs.
 	SetReportingPeriod(time.Duration)
-
+	
 	// RegisterExporter registers an exporter.
 	// Collected data will be reported via all the
 	// registered exporters. Once you no longer
@@ -99,13 +99,13 @@ type Meter interface {
 	// This is intended to be used in cases where a single process exports metrics
 	// for multiple Resources, typically in a multi-tenant situation.
 	SetResource(*resource.Resource)
-
+	
 	// Start causes the Meter to start processing Record calls and aggregating
 	// statistics as well as exporting data.
 	Start()
 	// Stop causes the Meter to stop processing calls and terminate data export.
 	Stop()
-
+	
 	// RetrieveData gets a snapshot of the data collected for the the view registered
 	// with the given name. It is intended for testing only.
 	RetrieveData(viewName string) ([]*Row, error)
@@ -267,7 +267,7 @@ func NewMeter() Meter {
 		c:              make(chan command, 1024),
 		quit:           make(chan bool),
 		done:           make(chan bool),
-
+		
 		exporters: make(map[Exporter]struct{}),
 	}
 }
@@ -287,7 +287,7 @@ func (w *worker) Start() {
 func (w *worker) start() {
 	prodMgr := metricproducer.GlobalManager()
 	prodMgr.AddProducer(w)
-
+	
 	for {
 		select {
 		case cmd := <-w.c:
@@ -337,7 +337,7 @@ func (w *worker) tryRegisterView(v *View) (*viewInternal, error) {
 		if !x.view.same(vi.view) {
 			return nil, fmt.Errorf("cannot register view %q; a different view with the same name is already registered", v.Name)
 		}
-
+		
 		// the view is already registered so there is nothing to do and the
 		// command is considered successful.
 		return x, nil
@@ -389,7 +389,7 @@ func (w *worker) toMetric(v *viewInternal, now time.Time) *metricdata.Metric {
 	if !v.isSubscribed() {
 		return nil
 	}
-
+	
 	return viewToMetric(v, w.r, now)
 }
 
@@ -412,7 +412,7 @@ func (w *worker) Read() []*metricdata.Metric {
 func (w *worker) RegisterExporter(e Exporter) {
 	w.exportersMu.Lock()
 	defer w.exportersMu.Unlock()
-
+	
 	w.exporters[e] = struct{}{}
 }
 

@@ -17,10 +17,10 @@ package stats
 
 import (
 	"context"
-
-	"go.opencensus.io/metric/metricdata"
-	"go.opencensus.io/stats/internal"
-	"go.opencensus.io/tag"
+	
+	"github.com/gozelle/opencensus-go/metric/metricdata"
+	"github.com/gozelle/opencensus-go/stats/internal"
+	"github.com/gozelle/opencensus-go/tag"
 )
 
 func init() {

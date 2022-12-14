@@ -22,21 +22,21 @@ import (
 	"sync"
 	"testing"
 	"time"
-
+	
 	"github.com/google/go-cmp/cmp"
-	"go.opencensus.io/resource"
-
-	"go.opencensus.io/metric/metricdata"
-	"go.opencensus.io/metric/metricexport"
-	"go.opencensus.io/stats"
-	"go.opencensus.io/tag"
+	"github.com/gozelle/opencensus-go/resource"
+	
+	"github.com/gozelle/opencensus-go/metric/metricdata"
+	"github.com/gozelle/opencensus-go/metric/metricexport"
+	"github.com/gozelle/opencensus-go/stats"
+	"github.com/gozelle/opencensus-go/tag"
 )
 
 func Test_Worker_ViewRegistration(t *testing.T) {
 	someError := errors.New("some error")
-
+	
 	sc1 := make(chan *Data)
-
+	
 	type registration struct {
 		c   chan *Data
 		vID string
@@ -83,14 +83,14 @@ func Test_Worker_ViewRegistration(t *testing.T) {
 			},
 		},
 	}
-
+	
 	mf1 := stats.Float64("MF1/Test_Worker_ViewSubscription", "desc MF1", "unit")
 	mf2 := stats.Float64("MF2/Test_Worker_ViewSubscription", "desc MF2", "unit")
-
+	
 	for _, tc := range tcs {
 		t.Run(tc.label, func(t *testing.T) {
 			restart()
-
+			
 			views := map[string]*View{
 				"v1ID": {
 					Name:        "VF1",
@@ -110,7 +110,7 @@ func Test_Worker_ViewRegistration(t *testing.T) {
 				},
 				"vNilID": nil,
 			}
-
+			
 			for _, r := range tc.registrations {
 				v := views[r.vID]
 				err := Register(v)
@@ -124,7 +124,7 @@ func Test_Worker_ViewRegistration(t *testing.T) {
 
 func Test_Worker_MultiExport(t *testing.T) {
 	restart()
-
+	
 	// This test reports the same data for the default worker and a secondary
 	// worker, and ensures that the stats are kept independently.
 	extraResource := resource.Resource{
@@ -134,12 +134,12 @@ func Test_Worker_MultiExport(t *testing.T) {
 	worker2 := NewMeter().(*worker)
 	worker2.Start()
 	worker2.SetResource(&extraResource)
-
+	
 	m := stats.Float64("Test_Worker_MultiExport/MF1", "desc MF1", "unit")
 	key := tag.MustNewKey(("key"))
 	count := &View{"VF1", "description", []tag.Key{key}, m, Count()}
 	sum := &View{"VF2", "description", []tag.Key{}, m, Sum()}
-
+	
 	Register(count, sum)
 	worker2.Register(count) // Don't compute the sum for worker2, to verify independence of computation.
 	data := []struct {
@@ -158,7 +158,7 @@ func Test_Worker_MultiExport(t *testing.T) {
 		w: worker2, tags: "b", value: 1.0,
 	},
 	}
-
+	
 	for _, d := range data {
 		ctx, err := tag.New(context.Background(), tag.Upsert(key, d.tags))
 		if err != nil {
@@ -170,14 +170,14 @@ func Test_Worker_MultiExport(t *testing.T) {
 			stats.Record(ctx, m.M(d.value))
 		}
 	}
-
+	
 	makeKey := func(r *resource.Resource, view string) string {
 		if r == nil {
 			r = &resource.Resource{}
 		}
 		return resource.EncodeLabels(r.Labels) + "/" + view
 	}
-
+	
 	// Format is Resource.Labels encoded as string, then
 	wantPartialData := map[string][]*Row{
 		makeKey(nil, count.Name): {
@@ -191,7 +191,7 @@ func Test_Worker_MultiExport(t *testing.T) {
 			{[]tag.Tag{{Key: key, Value: "b"}}, &CountData{Value: 1}},
 		},
 	}
-
+	
 	te := &testExporter{}
 	metricexport.NewReader().ReadAndExport(te)
 	for _, m := range te.metrics {
@@ -203,7 +203,7 @@ func Test_Worker_MultiExport(t *testing.T) {
 		}
 		gotTs := m.TimeSeries
 		sort.Sort(byLabel(gotTs))
-
+		
 		for i, ts := range gotTs {
 			for j, label := range ts.LabelValues {
 				if want[i].Tags[j].Value != label.Value {
@@ -226,13 +226,13 @@ func Test_Worker_MultiExport(t *testing.T) {
 			}
 		}
 	}
-
+	
 	// Verify that worker has not been computing sum:
 	got, err := worker2.RetrieveData(sum.Name)
 	if err == nil {
 		t.Errorf("%s: expected no data because it was not registered, got %#v", sum.Name, got)
 	}
-
+	
 	Unregister(count, sum)
 	worker2.Unregister(count)
 	worker2.Stop()
@@ -240,10 +240,10 @@ func Test_Worker_MultiExport(t *testing.T) {
 
 func Test_Worker_RecordFloat64(t *testing.T) {
 	restart()
-
+	
 	someError := errors.New("some error")
 	m := stats.Float64("Test_Worker_RecordFloat64/MF1", "desc MF1", "unit")
-
+	
 	k1 := tag.MustNewKey("k1")
 	k2 := tag.MustNewKey("k2")
 	ctx, err := tag.New(context.Background(),
@@ -253,10 +253,10 @@ func Test_Worker_RecordFloat64(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-
+	
 	v1 := &View{"VF1", "desc VF1", []tag.Key{k1, k2}, m, Count()}
 	v2 := &View{"VF2", "desc VF2", []tag.Key{k1, k2}, m, Count()}
-
+	
 	type want struct {
 		v    *View
 		rows []*Row
@@ -268,7 +268,7 @@ func Test_Worker_RecordFloat64(t *testing.T) {
 		records       []float64
 		wants         []want
 	}
-
+	
 	tcs := []testCase{
 		{
 			label:         "0",
@@ -322,18 +322,18 @@ func Test_Worker_RecordFloat64(t *testing.T) {
 			},
 		},
 	}
-
+	
 	for _, tc := range tcs {
 		for _, v := range tc.registrations {
 			if err := Register(v); err != nil {
 				t.Fatalf("%v: Register(%v) = %v; want no errors", tc.label, v.Name, err)
 			}
 		}
-
+		
 		for _, value := range tc.records {
 			stats.Record(ctx, m.M(value))
 		}
-
+		
 		for _, w := range tc.wants {
 			gotRows, err := RetrieveData(w.v.Name)
 			for i := range gotRows {
@@ -354,7 +354,7 @@ func Test_Worker_RecordFloat64(t *testing.T) {
 				break
 			}
 		}
-
+		
 		// Cleaning up.
 		Unregister(tc.registrations...)
 	}
@@ -362,9 +362,9 @@ func Test_Worker_RecordFloat64(t *testing.T) {
 
 func TestReportUsage(t *testing.T) {
 	ctx := context.Background()
-
+	
 	m := stats.Int64("measure", "desc", "unit")
-
+	
 	tests := []struct {
 		name         string
 		view         *View
@@ -381,32 +381,32 @@ func TestReportUsage(t *testing.T) {
 			wantMaxCount: 8,
 		},
 	}
-
+	
 	for _, tt := range tests {
 		restart()
 		SetReportingPeriod(25 * time.Millisecond)
-
+		
 		if err := Register(tt.view); err != nil {
 			t.Fatalf("%v: cannot register: %v", tt.name, err)
 		}
-
+		
 		e := &countExporter{}
 		RegisterExporter(e)
-
+		
 		stats.Record(ctx, m.M(1))
 		stats.Record(ctx, m.M(1))
 		stats.Record(ctx, m.M(1))
 		stats.Record(ctx, m.M(1))
-
+		
 		time.Sleep(50 * time.Millisecond)
-
+		
 		stats.Record(ctx, m.M(1))
 		stats.Record(ctx, m.M(1))
 		stats.Record(ctx, m.M(1))
 		stats.Record(ctx, m.M(1))
-
+		
 		time.Sleep(50 * time.Millisecond)
-
+		
 		e.Lock()
 		count := e.count
 		e.Unlock()
@@ -414,19 +414,19 @@ func TestReportUsage(t *testing.T) {
 			t.Errorf("%v: got count data = %v; want at most %v", tt.name, got, want)
 		}
 	}
-
+	
 }
 
 func Test_SetReportingPeriodReqNeverBlocks(t *testing.T) {
 	t.Parallel()
-
+	
 	worker := NewMeter().(*worker)
 	durations := []time.Duration{-1, 0, 10, 100 * time.Millisecond}
 	for i, duration := range durations {
 		ackChan := make(chan bool, 1)
 		cmd := &setReportingPeriodReq{c: ackChan, d: duration}
 		cmd.handleCommand(worker)
-
+		
 		select {
 		case <-ackChan:
 		case <-time.After(500 * time.Millisecond): // Arbitrarily using 500ms as the timeout duration.
@@ -437,7 +437,7 @@ func Test_SetReportingPeriodReqNeverBlocks(t *testing.T) {
 
 func TestWorkerStarttime(t *testing.T) {
 	restart()
-
+	
 	ctx := context.Background()
 	m := stats.Int64("measure/TestWorkerStarttime", "desc", "unit")
 	v := &View{
@@ -445,35 +445,35 @@ func TestWorkerStarttime(t *testing.T) {
 		Measure:     m,
 		Aggregation: Count(),
 	}
-
+	
 	SetReportingPeriod(25 * time.Millisecond)
 	if err := Register(v); err != nil {
 		t.Fatalf("cannot register to %v: %v", v.Name, err)
 	}
-
+	
 	e := &vdExporter{}
 	RegisterExporter(e)
 	defer UnregisterExporter(e)
-
+	
 	stats.Record(ctx, m.M(1))
 	stats.Record(ctx, m.M(1))
 	stats.Record(ctx, m.M(1))
 	stats.Record(ctx, m.M(1))
-
+	
 	time.Sleep(50 * time.Millisecond)
-
+	
 	stats.Record(ctx, m.M(1))
 	stats.Record(ctx, m.M(1))
 	stats.Record(ctx, m.M(1))
 	stats.Record(ctx, m.M(1))
-
+	
 	time.Sleep(50 * time.Millisecond)
-
+	
 	e.Lock()
 	if len(e.vds) == 0 {
 		t.Fatal("Got no view data; want at least one")
 	}
-
+	
 	var start time.Time
 	for _, vd := range e.vds {
 		if start.IsZero() {
@@ -489,30 +489,30 @@ func TestWorkerStarttime(t *testing.T) {
 func TestUnregisterReportsUsage(t *testing.T) {
 	restart()
 	ctx := context.Background()
-
+	
 	m1 := stats.Int64("measure", "desc", "unit")
 	view1 := &View{Name: "count", Measure: m1, Aggregation: Count()}
 	m2 := stats.Int64("measure2", "desc", "unit")
 	view2 := &View{Name: "count2", Measure: m2, Aggregation: Count()}
-
+	
 	SetReportingPeriod(time.Hour)
-
+	
 	if err := Register(view1, view2); err != nil {
 		t.Fatalf("cannot register: %v", err)
 	}
-
+	
 	e := &countExporter{}
 	RegisterExporter(e)
-
+	
 	stats.Record(ctx, m1.M(1))
 	stats.Record(ctx, m2.M(1))
 	stats.Record(ctx, m2.M(1))
-
+	
 	Unregister(view2)
-
+	
 	// Unregister should only flush view2, so expect the count of 2.
 	want := int64(2)
-
+	
 	e.Lock()
 	got := e.totalCount
 	e.Unlock()
@@ -524,38 +524,38 @@ func TestUnregisterReportsUsage(t *testing.T) {
 func TestWorkerRace(t *testing.T) {
 	restart()
 	ctx := context.Background()
-
+	
 	m1 := stats.Int64("measure", "desc", "unit")
 	view1 := &View{Name: "count", Measure: m1, Aggregation: Count()}
 	m2 := stats.Int64("measure2", "desc", "unit")
 	view2 := &View{Name: "count2", Measure: m2, Aggregation: Count()}
-
+	
 	// 1. This will export every microsecond.
 	SetReportingPeriod(time.Microsecond)
-
+	
 	if err := Register(view1, view2); err != nil {
 		t.Fatalf("cannot register: %v", err)
 	}
-
+	
 	e := &countExporter{}
 	RegisterExporter(e)
-
+	
 	// Synchronize and make sure every goroutine has terminated before we exit
 	var waiter sync.WaitGroup
 	waiter.Add(3)
 	defer waiter.Wait()
-
+	
 	doneCh := make(chan bool)
 	// 2. Record write routine at 700ns
 	go func() {
 		defer waiter.Done()
 		tick := time.NewTicker(700 * time.Nanosecond)
 		defer tick.Stop()
-
+		
 		defer func() {
 			close(doneCh)
 		}()
-
+		
 		for i := 0; i < 1e3; i++ {
 			stats.Record(ctx, m1.M(1))
 			stats.Record(ctx, m2.M(1))
@@ -563,13 +563,13 @@ func TestWorkerRace(t *testing.T) {
 			<-tick.C
 		}
 	}()
-
+	
 	// 2. Simulating RetrieveData 900ns
 	go func() {
 		defer waiter.Done()
 		tick := time.NewTicker(900 * time.Nanosecond)
 		defer tick.Stop()
-
+		
 		for {
 			select {
 			case <-doneCh:
@@ -579,13 +579,13 @@ func TestWorkerRace(t *testing.T) {
 			}
 		}
 	}()
-
+	
 	// 4. Export via Reader routine at 800ns
 	go func() {
 		defer waiter.Done()
 		tick := time.NewTicker(800 * time.Nanosecond)
 		defer tick.Stop()
-
+		
 		reader := metricexport.Reader{}
 		for {
 			select {
@@ -619,7 +619,7 @@ func (e *countExporter) ExportView(vd *Data) {
 		return
 	}
 	d := vd.Rows[0].Data.(*CountData)
-
+	
 	e.Lock()
 	defer e.Unlock()
 	e.count = d.Value
@@ -634,7 +634,7 @@ type vdExporter struct {
 func (e *vdExporter) ExportView(vd *Data) {
 	e.Lock()
 	defer e.Unlock()
-
+	
 	e.vds = append(e.vds, vd)
 }
 

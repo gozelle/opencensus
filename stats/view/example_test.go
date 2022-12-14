@@ -16,15 +16,15 @@ package view_test
 
 import (
 	"log"
-
-	"go.opencensus.io/stats"
-	"go.opencensus.io/stats/view"
+	
+	"github.com/gozelle/opencensus-go/stats"
+	"github.com/gozelle/opencensus-go/stats/view"
 )
 
 func Example() {
 	// Measures are usually declared and used by instrumented packages.
 	m := stats.Int64("example.com/measure/openconns", "open connections", stats.UnitDimensionless)
-
+	
 	// Views are usually registered in your application main function.
 	if err := view.Register(&view.View{
 		Name:        "example.com/views/openconns",
@@ -34,6 +34,6 @@ func Example() {
 	}); err != nil {
 		log.Fatal(err)
 	}
-
+	
 	// Use view.RegisterExporter to export collected data.
 }

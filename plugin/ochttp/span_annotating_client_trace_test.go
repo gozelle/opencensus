@@ -21,9 +21,9 @@ import (
 	"strings"
 	"sync"
 	"testing"
-
-	"go.opencensus.io/plugin/ochttp"
-	"go.opencensus.io/trace"
+	
+	"github.com/gozelle/opencensus-go/plugin/ochttp"
+	"github.com/gozelle/opencensus-go/trace"
 )
 
 func TestSpanAnnotatingClientTrace(t *testing.T) {
@@ -31,23 +31,23 @@ func TestSpanAnnotatingClientTrace(t *testing.T) {
 		resp.Write([]byte("Hello, world!"))
 	}))
 	defer server.Close()
-
+	
 	recorder := &testExporter{}
-
+	
 	trace.RegisterExporter(recorder)
-
+	
 	tr := ochttp.Transport{
 		NewClientTrace: ochttp.NewSpanAnnotatingClientTrace,
 		StartOptions: trace.StartOptions{
 			Sampler: trace.AlwaysSample(),
 		},
 	}
-
+	
 	req, err := http.NewRequest("POST", server.URL, strings.NewReader("req-body"))
 	if err != nil {
 		t.Errorf("error creating request: %v", err)
 	}
-
+	
 	resp, err := tr.RoundTrip(req)
 	if err != nil {
 		t.Errorf("response error: %v", err)
@@ -58,27 +58,27 @@ func TestSpanAnnotatingClientTrace(t *testing.T) {
 	if got, want := resp.StatusCode, 200; got != want {
 		t.Errorf("resp.StatusCode=%d; want=%d", got, want)
 	}
-
+	
 	if got, want := len(recorder.spans), 1; got != want {
 		t.Fatalf("span count=%d; want=%d", got, want)
 	}
-
+	
 	var annotations []string
 	for _, annotation := range recorder.spans[0].Annotations {
 		annotations = append(annotations, annotation.Message)
 	}
-
+	
 	required := []string{
 		"GetConn", "GotConn", "GotFirstResponseByte", "ConnectStart",
 		"ConnectDone", "WroteHeaders", "WroteRequest",
 	}
-
+	
 	if errs := requiredAnnotations(required, annotations); len(errs) > 0 {
 		for _, err := range errs {
 			t.Error(err)
 		}
 	}
-
+	
 }
 
 type testExporter struct {

@@ -15,14 +15,14 @@
 // Package b3 contains a propagation.HTTPFormat implementation
 // for B3 propagation. See https://github.com/openzipkin/b3-propagation
 // for more details.
-package b3 // import "go.opencensus.io/plugin/ochttp/propagation/b3"
+package b3 // import "github.com/gozelle/opencensus-go/plugin/ochttp/propagation/b3"
 
 import (
 	"encoding/hex"
 	"net/http"
-
-	"go.opencensus.io/trace"
-	"go.opencensus.io/trace/propagation"
+	
+	"github.com/gozelle/opencensus-go/trace"
+	"github.com/gozelle/opencensus-go/trace/propagation"
 )
 
 // B3 headers that OpenCensus understands.
@@ -80,7 +80,7 @@ func ParseTraceID(tid string) (trace.TraceID, bool) {
 		start := 16 - len(b)
 		copy(traceID[start:], b)
 	}
-
+	
 	return traceID, true
 }
 
@@ -112,7 +112,7 @@ func ParseSampled(sampled string) (trace.TraceOptions, bool) {
 func (f *HTTPFormat) SpanContextToRequest(sc trace.SpanContext, req *http.Request) {
 	req.Header.Set(TraceIDHeader, hex.EncodeToString(sc.TraceID[:]))
 	req.Header.Set(SpanIDHeader, hex.EncodeToString(sc.SpanID[:]))
-
+	
 	var sampled string
 	if sc.IsSampled() {
 		sampled = "1"

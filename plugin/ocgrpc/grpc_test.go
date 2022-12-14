@@ -19,12 +19,12 @@ import (
 	"sync"
 	"testing"
 	"time"
-
+	
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/stats"
-
-	"go.opencensus.io/stats/view"
-	"go.opencensus.io/trace"
+	
+	"github.com/gozelle/opencensus-go/stats/view"
+	"github.com/gozelle/opencensus-go/trace"
 )
 
 func TestClientHandler(t *testing.T) {
@@ -35,9 +35,9 @@ func TestClientHandler(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer view.Unregister(ClientSentMessagesPerRPCView)
-
+	
 	ctx, _ = trace.StartSpan(ctx, "/foo", trace.WithSampler(trace.AlwaysSample()))
-
+	
 	var handler ClientHandler
 	ctx = handler.TagRPC(ctx, &stats.RPCTagInfo{
 		FullMethodName: "/service.foo/method",
@@ -50,13 +50,13 @@ func TestClientHandler(t *testing.T) {
 		Client:  true,
 		EndTime: time.Now(),
 	})
-
+	
 	stats, err := view.RetrieveData(ClientSentMessagesPerRPCView.Name)
 	if err != nil {
 		t.Fatal(err)
 	}
 	traces := te.buffer
-
+	
 	if got, want := len(stats), 1; got != want {
 		t.Errorf("Got %v stats; want %v", got, want)
 	}
@@ -74,25 +74,25 @@ func TestServerHandler(t *testing.T) {
 		{"trust_metadata", false, 1},
 		{"no_trust_metadata", true, 0},
 	}
-
+	
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-
+			
 			ctx := context.Background()
-
+			
 			handler := &ServerHandler{
 				IsPublicEndpoint: test.newTrace,
 				StartOptions: trace.StartOptions{
 					Sampler: trace.ProbabilitySampler(0.0),
 				},
 			}
-
+			
 			te := &traceExporter{}
 			trace.RegisterExporter(te)
 			if err := view.Register(ServerCompletedRPCsView); err != nil {
 				t.Fatal(err)
 			}
-
+			
 			md := metadata.MD{
 				"grpc-trace-bin": []string{string([]byte{0, 0, 62, 116, 14, 118, 117, 157, 126, 7, 114, 152, 102, 125, 235, 34, 114, 238, 1, 187, 201, 24, 210, 231, 20, 175, 241, 2, 1})},
 			}
@@ -106,20 +106,20 @@ func TestServerHandler(t *testing.T) {
 			handler.HandleRPC(ctx, &stats.End{
 				EndTime: time.Now(),
 			})
-
+			
 			rows, err := view.RetrieveData(ServerCompletedRPCsView.Name)
 			if err != nil {
 				t.Fatal(err)
 			}
 			traces := te.buffer
-
+			
 			if got, want := len(rows), 1; got != want {
 				t.Errorf("Got %v rows; want %v", got, want)
 			}
 			if got, want := len(traces), test.expectTraces; got != want {
 				t.Errorf("Got %v traces; want %v", got, want)
 			}
-
+			
 			// Cleanup.
 			view.Unregister(ServerCompletedRPCsView)
 		})

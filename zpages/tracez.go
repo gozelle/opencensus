@@ -25,9 +25,9 @@ import (
 	"strings"
 	"text/tabwriter"
 	"time"
-
-	"go.opencensus.io/internal"
-	"go.opencensus.io/trace"
+	
+	"github.com/gozelle/opencensus-go/internal"
+	"github.com/gozelle/opencensus-go/trace"
 )
 
 const (
@@ -134,14 +134,14 @@ func WriteTextTracezSpans(w io.Writer, spanName string, spanType, spanSubtype in
 // WriteTextTracezSummary writes formatted text to w containing a summary of locally-sampled trace spans.
 func WriteTextTracezSummary(w io.Writer) {
 	w.Write([]byte("Locally sampled spans summary\n\n"))
-
+	
 	data := getSummaryPageData()
 	if len(data.Rows) == 0 {
 		return
 	}
-
+	
 	tw := tabwriter.NewWriter(w, 8, 8, 1, ' ', 0)
-
+	
 	for i, s := range data.Header {
 		if i != 0 {
 			tw.Write([]byte("\t"))
@@ -149,7 +149,7 @@ func WriteTextTracezSummary(w io.Writer) {
 		tw.Write([]byte(s))
 	}
 	tw.Write([]byte("\n"))
-
+	
 	put := func(x int) {
 		if x == 0 {
 			tw.Write([]byte(".\t"))
@@ -207,7 +207,7 @@ func (e events) Swap(i, j int) { e[i], e[j] = e[j], e[i] }
 
 func traceRows(s *trace.SpanData) []traceRow {
 	start := s.StartTime
-
+	
 	lasty, lastm, lastd := start.Date()
 	wholeTime := func(t time.Time) string {
 		return t.Format("2006/01/02-15:04:05") + fmt.Sprintf(".%06d", t.Nanosecond()/1000)
@@ -220,7 +220,7 @@ func traceRows(s *trace.SpanData) []traceRow {
 		lasty, lastm, lastd = y, m, d
 		return wholeTime(t)
 	}
-
+	
 	lastTime := start
 	formatElapsed := func(t time.Time) string {
 		d := t.Sub(lastTime)
@@ -249,7 +249,7 @@ func traceRows(s *trace.SpanData) []traceRow {
 			return fmt.Sprintf("%11ds", u/1e6)
 		}
 	}
-
+	
 	firstRow := traceRow{Fields: [3]string{wholeTime(start), "", ""}, SpanContext: s.SpanContext, ParentSpanID: s.ParentSpanID}
 	if s.EndTime.IsZero() {
 		firstRow.Fields[1] = "            "
@@ -258,7 +258,7 @@ func traceRows(s *trace.SpanData) []traceRow {
 		lastTime = start
 	}
 	out := []traceRow{firstRow}
-
+	
 	formatAttributes := func(a map[string]interface{}) string {
 		if len(a) == 0 {
 			return ""
@@ -280,17 +280,17 @@ func traceRows(s *trace.SpanData) []traceRow {
 		}
 		return "Attributes:{" + strings.Join(s, ", ") + "}"
 	}
-
+	
 	if s.Status != (trace.Status{}) {
 		msg := fmt.Sprintf("Status{canonicalCode=%s, description=%q}",
 			canonicalCodeString(s.Status.Code), s.Status.Message)
 		out = append(out, traceRow{Fields: [3]string{"", "", msg}})
 	}
-
+	
 	if len(s.Attributes) != 0 {
 		out = append(out, traceRow{Fields: [3]string{"", "", formatAttributes(s.Attributes)}})
 	}
-
+	
 	var es events
 	for i := range s.Annotations {
 		es = append(es, &s.Annotations[i])

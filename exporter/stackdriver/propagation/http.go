@@ -14,7 +14,7 @@
 
 // Package propagation implement X-Cloud-Trace-Context header propagation used
 // by Google Cloud products.
-package propagation // import "go.opencensus.io/exporter/stackdriver/propagation"
+package propagation // import "github.com/gozelle/opencensus-go/exporter/stackdriver/propagation"
 
 import (
 	"encoding/binary"
@@ -23,9 +23,9 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-
-	"go.opencensus.io/trace"
-	"go.opencensus.io/trace/propagation"
+	
+	"github.com/gozelle/opencensus-go/trace"
+	"github.com/gozelle/opencensus-go/trace/propagation"
 )
 
 const (
@@ -48,20 +48,20 @@ func (f *HTTPFormat) SpanContextFromRequest(req *http.Request) (sc trace.SpanCon
 	if h == "" || len(h) > httpHeaderMaxSize {
 		return trace.SpanContext{}, false
 	}
-
+	
 	// Parse the trace id field.
 	slash := strings.Index(h, `/`)
 	if slash == -1 {
 		return trace.SpanContext{}, false
 	}
 	tid, h := h[:slash], h[slash+1:]
-
+	
 	buf, err := hex.DecodeString(tid)
 	if err != nil {
 		return trace.SpanContext{}, false
 	}
 	copy(sc.TraceID[:], buf)
-
+	
 	// Parse the span id field.
 	spanstr := h
 	semicolon := strings.Index(h, `;`)
@@ -73,7 +73,7 @@ func (f *HTTPFormat) SpanContextFromRequest(req *http.Request) (sc trace.SpanCon
 		return trace.SpanContext{}, false
 	}
 	binary.BigEndian.PutUint64(sc.SpanID[:], sid)
-
+	
 	// Parse the options field, options field is optional.
 	if !strings.HasPrefix(h, "o=") {
 		return sc, true

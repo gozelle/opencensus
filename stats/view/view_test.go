@@ -19,14 +19,14 @@ import (
 	"context"
 	"testing"
 	"time"
-
+	
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
-
-	"go.opencensus.io/metric/metricdata"
-
-	"go.opencensus.io/stats"
-	"go.opencensus.io/tag"
+	
+	"github.com/gozelle/opencensus-go/metric/metricdata"
+	
+	"github.com/gozelle/opencensus-go/stats"
+	"github.com/gozelle/opencensus-go/tag"
 )
 
 func Test_View_MeasureFloat64_AggregationDistribution(t *testing.T) {
@@ -44,7 +44,7 @@ func Test_View_MeasureFloat64_AggregationDistribution(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-
+	
 	type tagString struct {
 		k tag.Key
 		v string
@@ -54,13 +54,13 @@ func Test_View_MeasureFloat64_AggregationDistribution(t *testing.T) {
 		tags []tagString
 		t    time.Time
 	}
-
+	
 	type testCase struct {
 		label    string
 		records  []record
 		wantRows []*Row
 	}
-
+	
 	now := time.Now()
 	ts := make([]time.Time, 7)
 	for i := range ts {
@@ -172,7 +172,7 @@ func Test_View_MeasureFloat64_AggregationDistribution(t *testing.T) {
 			},
 		},
 	}
-
+	
 	for _, tc := range tcs {
 		view.clearRows()
 		view.subscribe()
@@ -187,7 +187,7 @@ func Test_View_MeasureFloat64_AggregationDistribution(t *testing.T) {
 			}
 			view.addSample(tag.FromContext(ctx), r.f, nil, r.t)
 		}
-
+		
 		gotRows := view.collectedRows()
 		if diff := cmp.Diff(gotRows, tc.wantRows, cmpopts.SortSlices(cmpRow)); diff != "" {
 			t.Errorf("%v: unexpected row (got-, want+): %s", tc.label, diff)
@@ -205,7 +205,7 @@ func Test_View_MeasureFloat64_AggregationSum(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-
+	
 	type tagString struct {
 		k tag.Key
 		v string
@@ -215,7 +215,7 @@ func Test_View_MeasureFloat64_AggregationSum(t *testing.T) {
 		tags []tagString
 		t    time.Time
 	}
-
+	
 	now := time.Now()
 	ts := make([]time.Time, 5)
 	for i := range ts {
@@ -285,7 +285,7 @@ func Test_View_MeasureFloat64_AggregationSum(t *testing.T) {
 			},
 		},
 	}
-
+	
 	for _, tt := range tcs {
 		view.clearRows()
 		view.subscribe()
@@ -300,7 +300,7 @@ func Test_View_MeasureFloat64_AggregationSum(t *testing.T) {
 			}
 			view.addSample(tag.FromContext(ctx), r.f, nil, r.t)
 		}
-
+		
 		gotRows := view.collectedRows()
 		if diff := cmp.Diff(gotRows, tt.wantRows, cmpopts.SortSlices(cmpRow)); diff != "" {
 			t.Errorf("%v: unexpected row (got-, want+): %s", tt.label, diff)
@@ -337,7 +337,7 @@ func TestViewSortedKeys(t *testing.T) {
 	k2 := tag.MustNewKey("b")
 	k3 := tag.MustNewKey("c")
 	ks := []tag.Key{k1, k3, k2}
-
+	
 	m := stats.Int64("TestViewSortedKeys/m1", "", stats.UnitDimensionless)
 	Register(&View{
 		Name:        "sort_keys",
@@ -348,13 +348,13 @@ func TestViewSortedKeys(t *testing.T) {
 	})
 	// Register normalizes the view by sorting the tag keys, retrieve the normalized view
 	v := Find("sort_keys")
-
+	
 	want := []string{"a", "b", "c"}
 	vks := v.TagKeys
 	if len(vks) != len(want) {
 		t.Errorf("Keys = %+v; want %+v", vks, want)
 	}
-
+	
 	for i, v := range want {
 		if got, want := v, vks[i].Name(); got != want {
 			t.Errorf("View name = %q; want %q", got, want)
@@ -376,7 +376,7 @@ func TestRegisterUnregisterParity(t *testing.T) {
 		Sum(),
 		Distribution(1, 2.0, 4.0, 8.0, 16.0),
 	}
-
+	
 	for i := 0; i < 10; i++ {
 		for _, m := range measures {
 			for _, agg := range aggregations {
@@ -397,11 +397,11 @@ func TestRegisterUnregisterParity(t *testing.T) {
 func TestRegisterAfterMeasurement(t *testing.T) {
 	// Tests that we can register views after measurements are created and
 	// they still take effect.
-
+	
 	m := stats.Int64(t.Name(), "", stats.UnitDimensionless)
 	mm := m.M(1)
 	ctx := context.Background()
-
+	
 	stats.Record(ctx, mm)
 	v := &View{
 		Measure:     m,
@@ -410,7 +410,7 @@ func TestRegisterAfterMeasurement(t *testing.T) {
 	if err := Register(v); err != nil {
 		t.Fatal(err)
 	}
-
+	
 	rows, err := RetrieveData(v.Name)
 	if err != nil {
 		t.Fatal(err)
@@ -418,9 +418,9 @@ func TestRegisterAfterMeasurement(t *testing.T) {
 	if len(rows) > 0 {
 		t.Error("View should not have data")
 	}
-
+	
 	stats.Record(ctx, mm)
-
+	
 	rows, err = RetrieveData(v.Name)
 	if err != nil {
 		t.Fatal(err)

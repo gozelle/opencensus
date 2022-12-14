@@ -16,20 +16,20 @@ package metric_test
 
 import (
 	"net/http"
-
-	"go.opencensus.io/metric"
-	"go.opencensus.io/metric/metricdata"
+	
+	"github.com/gozelle/opencensus-go/metric"
+	"github.com/gozelle/opencensus-go/metric/metricdata"
 )
 
 func ExampleRegistry_AddInt64Gauge() {
 	r := metric.NewRegistry()
 	// TODO: allow exporting from a registry
-
+	
 	g, _ := r.AddInt64Gauge("active_request",
 		metric.WithDescription("Number of active requests, per method."),
 		metric.WithUnit(metricdata.UnitDimensionless),
 		metric.WithLabelKeys("method"))
-
+	
 	http.HandleFunc("/", func(writer http.ResponseWriter, request *http.Request) {
 		e, _ := g.GetEntry(metricdata.NewLabelValue(request.Method))
 		e.Add(1)

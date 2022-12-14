@@ -26,14 +26,14 @@ import (
 	"log"
 	"os"
 	"time"
-
+	
 	"net/http"
-
-	"go.opencensus.io/examples/exporter"
-	"go.opencensus.io/stats"
-	"go.opencensus.io/stats/view"
-	"go.opencensus.io/tag"
-	"go.opencensus.io/zpages"
+	
+	"github.com/gozelle/opencensus-go/examples/exporter"
+	"github.com/gozelle/opencensus-go/stats"
+	"github.com/gozelle/opencensus-go/stats/view"
+	"github.com/gozelle/opencensus-go/tag"
+	"github.com/gozelle/opencensus-go/zpages"
 )
 
 const (
@@ -44,13 +44,13 @@ const (
 var (
 	// The latency in milliseconds
 	mLatencyMs = stats.Float64("repl/latency", "The latency in milliseconds per REPL loop", stats.UnitMilliseconds)
-
+	
 	// Counts the number of lines read in from standard input
 	mLinesIn = stats.Int64("repl/lines_in", "The number of lines read in", stats.UnitDimensionless)
-
+	
 	// Encounters the number of non EOF(end-of-file) errors.
 	mErrors = stats.Int64("repl/errors", "The number of errors encountered", stats.UnitDimensionless)
-
+	
 	// Counts/groups the lengths of lines read in.
 	mLineLengths = stats.Int64("repl/line_lengths", "The distribution of line lengths", stats.UnitBytes)
 )
@@ -66,26 +66,26 @@ var (
 		Name:        "demo/latency",
 		Measure:     mLatencyMs,
 		Description: "The distribution of the latencies",
-
+		
 		// Latency in buckets:
 		// [>=0ms, >=25ms, >=50ms, >=75ms, >=100ms, >=200ms, >=400ms, >=600ms, >=800ms, >=1s, >=2s, >=4s, >=6s]
 		Aggregation: view.Distribution(25, 50, 75, 100, 200, 400, 600, 800, 1000, 2000, 4000, 6000),
 		TagKeys:     []tag.Key{keyMethod}}
-
+	
 	lineCountView = &view.View{
 		Name:        "demo/lines_in",
 		Measure:     mLinesIn,
 		Description: "The number of lines from standard input",
 		Aggregation: view.Count(),
 	}
-
+	
 	errorCountView = &view.View{
 		Name:        "demo/errors",
 		Measure:     mErrors,
 		Description: "The number of errors encountered",
 		Aggregation: view.Count(),
 	}
-
+	
 	lineLengthView = &view.View{
 		Name:        "demo/line_lengths",
 		Description: "Groups the lengths of keys in buckets",
@@ -98,7 +98,7 @@ var (
 func main() {
 	zpages.Handle(nil, "/debug")
 	go http.ListenAndServe("localhost:8080", nil)
-
+	
 	// Using log exporter here to export metrics but you can choose any supported exporter.
 	exporter, err := exporter.NewLogExporter(exporter.Options{
 		ReportingInterval: 10 * time.Second,
@@ -110,17 +110,17 @@ func main() {
 	exporter.Start()
 	defer exporter.Stop()
 	defer exporter.Close()
-
+	
 	// Register the views
 	if err := view.Register(latencyView, lineCountView, errorCountView, lineLengthView); err != nil {
 		log.Fatalf("Failed to register views: %v", err)
 	}
-
+	
 	// In a REPL:
 	//   1. Read input
 	//   2. process input
 	br := bufio.NewReader(os.Stdin)
-
+	
 	// repl is the read, evaluate, print, loop
 	for {
 		if err := readEvaluateProcess(br); err != nil {
@@ -139,7 +139,7 @@ func readEvaluateProcess(br *bufio.Reader) error {
 	if err != nil {
 		return err
 	}
-
+	
 	fmt.Printf("> ")
 	line, _, err := br.ReadLine()
 	if err != nil {
@@ -148,7 +148,7 @@ func readEvaluateProcess(br *bufio.Reader) error {
 		}
 		return err
 	}
-
+	
 	out, err := processLine(ctx, line)
 	if err != nil {
 		stats.Record(ctx, mErrors.M(1))

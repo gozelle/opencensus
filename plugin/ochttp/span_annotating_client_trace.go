@@ -19,8 +19,8 @@ import (
 	"net/http"
 	"net/http/httptrace"
 	"strings"
-
-	"go.opencensus.io/trace"
+	
+	"github.com/gozelle/opencensus-go/trace"
 )
 
 type spanAnnotator struct {
@@ -40,7 +40,7 @@ func NewSpanAnnotator(r *http.Request, s *trace.Span) *httptrace.ClientTrace {
 // all emitted httptrace events on the provided Span.
 func NewSpanAnnotatingClientTrace(_ *http.Request, s *trace.Span) *httptrace.ClientTrace {
 	sa := spanAnnotator{sp: s}
-
+	
 	return &httptrace.ClientTrace{
 		GetConn:              sa.getConn,
 		GotConn:              sa.gotConn,

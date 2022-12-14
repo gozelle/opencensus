@@ -20,10 +20,10 @@ import (
 	"fmt"
 	"strings"
 	"time"
-
-	"go.opencensus.io/stats"
-	"go.opencensus.io/stats/internal"
-	"go.opencensus.io/tag"
+	
+	"github.com/gozelle/opencensus-go/stats"
+	"github.com/gozelle/opencensus-go/stats/internal"
+	"github.com/gozelle/opencensus-go/tag"
 )
 
 type command interface {
@@ -93,10 +93,10 @@ func (cmd *unregisterFromViewReq) handleCommand(w *worker) {
 		if !ok {
 			continue
 		}
-
+		
 		// Report pending data for this view before removing it.
 		w.reportView(vi)
-
+		
 		vi.unsubscribe()
 		if !vi.isSubscribed() {
 			// this was the last subscription and view is not collecting anymore.
@@ -131,7 +131,7 @@ func (cmd *retrieveDataReq) handleCommand(w *worker) {
 		}
 		return
 	}
-
+	
 	if !vi.isSubscribed() {
 		cmd.c <- &retrieveDataResp{
 			nil,

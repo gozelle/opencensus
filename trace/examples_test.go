@@ -17,8 +17,8 @@ package trace_test
 import (
 	"context"
 	"fmt"
-
-	"go.opencensus.io/trace"
+	
+	"github.com/gozelle/opencensus-go/trace"
 )
 
 // This example shows how to use StartSpan and (*Span).End to capture
@@ -28,14 +28,14 @@ func ExampleStartSpan() {
 	printEvens := func(ctx context.Context) {
 		ctx, span := trace.StartSpan(ctx, "my/package.Function")
 		defer span.End()
-
+		
 		for i := 0; i < 10; i++ {
 			if i%2 == 0 {
 				fmt.Printf("Even!\n")
 			}
 		}
 	}
-
+	
 	ctx := context.Background()
 	printEvens(ctx)
 }

@@ -17,15 +17,15 @@ package metric
 import (
 	"testing"
 	"time"
-
+	
 	"github.com/google/go-cmp/cmp"
-
-	"go.opencensus.io/metric/metricdata"
+	
+	"github.com/gozelle/opencensus-go/metric/metricdata"
 )
 
 func TestCumulative(t *testing.T) {
 	r := NewRegistry()
-
+	
 	f, _ := r.AddFloat64Cumulative("TestCumulative",
 		WithLabelKeys("k1", "k2"))
 	e, _ := f.GetEntry(metricdata.LabelValue{}, metricdata.LabelValue{})
@@ -86,14 +86,14 @@ func TestCumulative(t *testing.T) {
 
 func TestCumulativeConstLabel(t *testing.T) {
 	r := NewRegistry()
-
+	
 	f, _ := r.AddFloat64Cumulative("TestCumulativeWithConstLabel",
 		WithLabelKeys("k1"),
 		WithConstLabel(map[metricdata.LabelKey]metricdata.LabelValue{
 			{Key: "const"}:  metricdata.NewLabelValue("same"),
 			{Key: "const2"}: metricdata.NewLabelValue("same2"),
 		}))
-
+	
 	e, _ := f.GetEntry(metricdata.LabelValue{})
 	e.Inc(5)
 	e, _ = f.GetEntry(metricdata.NewLabelValue("k1v1"))
@@ -141,7 +141,7 @@ func TestCumulativeConstLabel(t *testing.T) {
 
 func TestCumulativeMetricDescriptor(t *testing.T) {
 	r := NewRegistry()
-
+	
 	gf, _ := r.AddFloat64Cumulative("float64_gauge")
 	compareType(gf.bm.desc.Type, metricdata.TypeCumulativeFloat64, t)
 	gi, _ := r.AddInt64Cumulative("int64_gauge")

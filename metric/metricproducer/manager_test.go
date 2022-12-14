@@ -16,8 +16,8 @@ package metricproducer
 
 import (
 	"testing"
-
-	"go.opencensus.io/metric/metricdata"
+	
+	"github.com/gozelle/opencensus-go/metric/metricdata"
 )
 
 type testProducer struct {
@@ -42,7 +42,7 @@ func (mp *testProducer) Read() []*metricdata.Metric {
 func TestAdd(t *testing.T) {
 	pm.AddProducer(myProd1)
 	pm.AddProducer(myProd2)
-
+	
 	got := pm.GetAll()
 	want := []*testProducer{myProd1, myProd2}
 	checkSlice(got, want, t)
@@ -53,7 +53,7 @@ func TestAddExisting(t *testing.T) {
 	pm.AddProducer(myProd1)
 	pm.AddProducer(myProd2)
 	pm.AddProducer(myProd1)
-
+	
 	got := pm.GetAll()
 	want := []*testProducer{myProd2, myProd1}
 	checkSlice(got, want, t)
@@ -62,7 +62,7 @@ func TestAddExisting(t *testing.T) {
 
 func TestAddNil(t *testing.T) {
 	pm.AddProducer(nil)
-
+	
 	got := pm.GetAll()
 	want := []*testProducer{}
 	checkSlice(got, want, t)
@@ -74,7 +74,7 @@ func TestDelete(t *testing.T) {
 	pm.AddProducer(myProd2)
 	pm.AddProducer(myProd3)
 	pm.DeleteProducer(myProd2)
-
+	
 	got := pm.GetAll()
 	want := []*testProducer{myProd1, myProd3}
 	checkSlice(got, want, t)
@@ -85,7 +85,7 @@ func TestDeleteNonExisting(t *testing.T) {
 	pm.AddProducer(myProd1)
 	pm.AddProducer(myProd3)
 	pm.DeleteProducer(myProd2)
-
+	
 	got := pm.GetAll()
 	want := []*testProducer{myProd1, myProd3}
 	checkSlice(got, want, t)
@@ -96,7 +96,7 @@ func TestDeleteNil(t *testing.T) {
 	pm.AddProducer(myProd1)
 	pm.AddProducer(myProd3)
 	pm.DeleteProducer(nil)
-
+	
 	got := pm.GetAll()
 	want := []*testProducer{myProd1, myProd3}
 	checkSlice(got, want, t)
@@ -113,7 +113,7 @@ func TestGetAllNil(t *testing.T) {
 func TestImmutableProducerList(t *testing.T) {
 	pm.AddProducer(myProd1)
 	pm.AddProducer(myProd2)
-
+	
 	producersToMutate := pm.GetAll()
 	producersToMutate[0] = myProd3
 	got := pm.GetAll()

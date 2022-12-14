@@ -23,13 +23,13 @@ import (
 	"net"
 	"net/http"
 	"time"
-
-	"go.opencensus.io/examples/exporter"
-	pb "go.opencensus.io/examples/grpc/proto"
-	"go.opencensus.io/plugin/ocgrpc"
-	"go.opencensus.io/stats/view"
-	"go.opencensus.io/trace"
-	"go.opencensus.io/zpages"
+	
+	"github.com/gozelle/opencensus-go/examples/exporter"
+	pb "github.com/gozelle/opencensus-go/examples/grpc/proto"
+	"github.com/gozelle/opencensus-go/plugin/ocgrpc"
+	"github.com/gozelle/opencensus-go/stats/view"
+	"github.com/gozelle/opencensus-go/trace"
+	"github.com/gozelle/opencensus-go/zpages"
 	"google.golang.org/grpc"
 )
 
@@ -53,26 +53,26 @@ func main() {
 		zpages.Handle(mux, "/debug")
 		log.Fatal(http.ListenAndServe("127.0.0.1:8081", mux))
 	}()
-
+	
 	// Register stats and trace exporters to export
 	// the collected data.
 	view.RegisterExporter(&exporter.PrintExporter{})
-
+	
 	// Register the views to collect server request count.
 	if err := view.Register(ocgrpc.DefaultServerViews...); err != nil {
 		log.Fatal(err)
 	}
-
+	
 	lis, err := net.Listen("tcp", port)
 	if err != nil {
 		log.Fatalf("Failed to listen: %v", err)
 	}
-
+	
 	// Set up a new server with the OpenCensus
 	// stats handler to enable stats and tracing.
 	s := grpc.NewServer(grpc.StatsHandler(&ocgrpc.ServerHandler{}))
 	pb.RegisterGreeterServer(s, &server{})
-
+	
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("Failed to serve: %v", err)
 	}

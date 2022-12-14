@@ -22,10 +22,10 @@ import (
 	"strings"
 	"sync"
 	"testing"
-
-	"go.opencensus.io/plugin/ochttp"
-	"go.opencensus.io/stats/view"
-	"go.opencensus.io/trace"
+	
+	"github.com/gozelle/opencensus-go/plugin/ochttp"
+	"github.com/gozelle/opencensus-go/stats/view"
+	"github.com/gozelle/opencensus-go/trace"
 )
 
 const reqCount = 5
@@ -35,7 +35,7 @@ func TestClientNew(t *testing.T) {
 		resp.Write([]byte("Hello, world!"))
 	}))
 	defer server.Close()
-
+	
 	if err := view.Register(
 		ochttp.ClientSentBytesDistribution,
 		ochttp.ClientReceivedBytesDistribution,
@@ -44,7 +44,7 @@ func TestClientNew(t *testing.T) {
 	); err != nil {
 		t.Fatalf("Failed to register ochttp.DefaultClientViews error: %v", err)
 	}
-
+	
 	views := []string{
 		"opencensus.io/http/client/sent_bytes",
 		"opencensus.io/http/client/received_bytes",
@@ -58,12 +58,12 @@ func TestClientNew(t *testing.T) {
 			continue
 		}
 	}
-
+	
 	var wg sync.WaitGroup
 	var tr ochttp.Transport
 	errs := make(chan error, reqCount)
 	wg.Add(reqCount)
-
+	
 	for i := 0; i < reqCount; i++ {
 		go func() {
 			defer wg.Done()
@@ -83,18 +83,18 @@ func TestClientNew(t *testing.T) {
 			}
 		}()
 	}
-
+	
 	go func() {
 		wg.Wait()
 		close(errs)
 	}()
-
+	
 	for err := range errs {
 		if err != nil {
 			t.Fatal(err)
 		}
 	}
-
+	
 	for _, viewName := range views {
 		v := view.Find(viewName)
 		if v == nil {
@@ -132,11 +132,11 @@ func TestClientOld(t *testing.T) {
 		resp.Write([]byte("Hello, world!"))
 	}))
 	defer server.Close()
-
+	
 	if err := view.Register(ochttp.DefaultClientViews...); err != nil {
 		t.Fatalf("Failed to register ochttp.DefaultClientViews error: %v", err)
 	}
-
+	
 	views := []string{
 		"opencensus.io/http/client/request_count",
 		"opencensus.io/http/client/latency",
@@ -150,12 +150,12 @@ func TestClientOld(t *testing.T) {
 			continue
 		}
 	}
-
+	
 	var wg sync.WaitGroup
 	var tr ochttp.Transport
 	errs := make(chan error, reqCount)
 	wg.Add(reqCount)
-
+	
 	for i := 0; i < reqCount; i++ {
 		go func() {
 			defer wg.Done()
@@ -175,18 +175,18 @@ func TestClientOld(t *testing.T) {
 			}
 		}()
 	}
-
+	
 	go func() {
 		wg.Wait()
 		close(errs)
 	}()
-
+	
 	for err := range errs {
 		if err != nil {
 			t.Fatal(err)
 		}
 	}
-
+	
 	for _, viewName := range views {
 		v := view.Find(viewName)
 		if v == nil {
@@ -239,7 +239,7 @@ func benchmarkClientServer(b *testing.B, transport *ochttp.Transport) {
 	var client http.Client
 	client.Transport = transport
 	b.ResetTimer()
-
+	
 	for i := 0; i < b.N; i++ {
 		res, err := client.Get(ts.URL)
 		if err != nil {
@@ -271,7 +271,7 @@ func benchmarkClientServerParallel(b *testing.B, parallelism int, transport *och
 		fmt.Fprintf(rw, "Hello world.\n")
 	}))
 	defer ts.Close()
-
+	
 	var c http.Client
 	transport.Base = &http.Transport{
 		MaxIdleConns:        parallelism,
@@ -279,11 +279,11 @@ func benchmarkClientServerParallel(b *testing.B, parallelism int, transport *och
 	}
 	transport.StartOptions.Sampler = trace.AlwaysSample()
 	c.Transport = transport
-
+	
 	b.ResetTimer()
-
+	
 	// TODO(ramonza): replace with b.RunParallel (it didn't work when I tried)
-
+	
 	var wg sync.WaitGroup
 	wg.Add(parallelism)
 	for i := 0; i < parallelism; i++ {

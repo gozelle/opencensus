@@ -17,9 +17,9 @@ package ochttp
 import (
 	"net/http"
 	"net/http/httptrace"
-
-	"go.opencensus.io/trace"
-	"go.opencensus.io/trace/propagation"
+	
+	"github.com/gozelle/opencensus-go/trace"
+	"github.com/gozelle/opencensus-go/trace/propagation"
 )
 
 // Transport is an http.RoundTripper that instruments all outgoing requests with
@@ -35,32 +35,32 @@ type Transport struct {
 	// If base HTTP roundtripper implements CancelRequest,
 	// the returned round tripper will be cancelable.
 	Base http.RoundTripper
-
+	
 	// Propagation defines how traces are propagated. If unspecified, a default
 	// (currently B3 format) will be used.
 	Propagation propagation.HTTPFormat
-
+	
 	// StartOptions are applied to the span started by this Transport around each
 	// request.
 	//
 	// StartOptions.SpanKind will always be set to trace.SpanKindClient
 	// for spans started by this transport.
 	StartOptions trace.StartOptions
-
+	
 	// GetStartOptions allows to set start options per request. If set,
 	// StartOptions is going to be ignored.
 	GetStartOptions func(*http.Request) trace.StartOptions
-
+	
 	// NameFromRequest holds the function to use for generating the span name
 	// from the information found in the outgoing HTTP Request. By default the
 	// name equals the URL Path.
 	FormatSpanName func(*http.Request) string
-
+	
 	// NewClientTrace may be set to a function allowing the current *trace.Span
 	// to be annotated with HTTP request event information emitted by the
 	// httptrace package.
 	NewClientTrace func(*http.Request, *trace.Span) *httptrace.ClientTrace
-
+	
 	// TODO: Implement tag propagation for HTTP.
 }
 
@@ -79,12 +79,12 @@ func (t *Transport) RoundTrip(req *http.Request) (*http.Response, error) {
 	if spanNameFormatter == nil {
 		spanNameFormatter = spanNameFromURL
 	}
-
+	
 	startOpts := t.StartOptions
 	if t.GetStartOptions != nil {
 		startOpts = t.GetStartOptions(req)
 	}
-
+	
 	rt = &traceTransport{
 		base:   rt,
 		format: format,

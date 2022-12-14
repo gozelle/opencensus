@@ -17,11 +17,11 @@ package view
 
 import (
 	"time"
-
-	"go.opencensus.io/resource"
-
-	"go.opencensus.io/metric/metricdata"
-	"go.opencensus.io/stats"
+	
+	"github.com/gozelle/opencensus-go/resource"
+	
+	"github.com/gozelle/opencensus-go/metric/metricdata"
+	"github.com/gozelle/opencensus-go/stats"
 )
 
 func getUnit(unit string) metricdata.Unit {
@@ -39,7 +39,7 @@ func getUnit(unit string) metricdata.Unit {
 func getType(v *View) metricdata.Type {
 	m := v.Measure
 	agg := v.Aggregation
-
+	
 	switch agg.Type {
 	case AggTypeSum:
 		switch m.(type) {
@@ -108,7 +108,7 @@ func toLabelValues(row *Row, expectedKeys []metricdata.LabelKey) []metricdata.La
 	for _, tag := range row.Tags {
 		tagMap[tag.Key.Name()] = tag.Value
 	}
-
+	
 	for _, key := range expectedKeys {
 		if val, ok := tagMap[key.Key]; ok {
 			labelValues = append(labelValues, metricdata.NewLabelValue(val))
@@ -132,12 +132,12 @@ func viewToMetric(v *viewInternal, r *resource.Resource, now time.Time) *metricd
 	if len(rows) == 0 {
 		return nil
 	}
-
+	
 	ts := []*metricdata.TimeSeries{}
 	for _, row := range rows {
 		ts = append(ts, rowToTimeseries(v, row, now))
 	}
-
+	
 	m := &metricdata.Metric{
 		Descriptor: *v.metricDescriptor,
 		TimeSeries: ts,

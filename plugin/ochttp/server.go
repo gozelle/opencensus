@@ -21,11 +21,11 @@ import (
 	"strconv"
 	"sync"
 	"time"
-
-	"go.opencensus.io/stats"
-	"go.opencensus.io/tag"
-	"go.opencensus.io/trace"
-	"go.opencensus.io/trace/propagation"
+	
+	"github.com/gozelle/opencensus-go/stats"
+	"github.com/gozelle/opencensus-go/tag"
+	"github.com/gozelle/opencensus-go/trace"
+	"github.com/gozelle/opencensus-go/trace/propagation"
 )
 
 // Handler is an http.Handler wrapper to instrument your HTTP server with
@@ -45,32 +45,32 @@ type Handler struct {
 	// Propagation defines how traces are propagated. If unspecified,
 	// B3 propagation will be used.
 	Propagation propagation.HTTPFormat
-
+	
 	// Handler is the handler used to handle the incoming request.
 	Handler http.Handler
-
+	
 	// StartOptions are applied to the span started by this Handler around each
 	// request.
 	//
 	// StartOptions.SpanKind will always be set to trace.SpanKindServer
 	// for spans started by this transport.
 	StartOptions trace.StartOptions
-
+	
 	// GetStartOptions allows to set start options per request. If set,
 	// StartOptions is going to be ignored.
 	GetStartOptions func(*http.Request) trace.StartOptions
-
+	
 	// IsPublicEndpoint should be set to true for publicly accessible HTTP(S)
 	// servers. If true, any trace metadata set on the incoming request will
 	// be added as a linked trace instead of being added as a parent of the
 	// current trace.
 	IsPublicEndpoint bool
-
+	
 	// FormatSpanName holds the function to use for generating the span name
 	// from the information found in the incoming HTTP Request. By default the
 	// name equals the URL Path.
 	FormatSpanName func(*http.Request) string
-
+	
 	// IsHealthEndpoint holds the function to use for determining if the
 	// incoming HTTP request should be considered a health check. This is in
 	// addition to the private isHealthEndpoint func which may also indicate
@@ -103,12 +103,12 @@ func (h *Handler) startTrace(w http.ResponseWriter, r *http.Request) (*http.Requ
 		name = h.FormatSpanName(r)
 	}
 	ctx := r.Context()
-
+	
 	startOpts := h.StartOptions
 	if h.GetStartOptions != nil {
 		startOpts = h.GetStartOptions(r)
 	}
-
+	
 	var span *trace.Span
 	sc, ok := h.extractSpanContext(r)
 	if ok && !h.IsPublicEndpoint {
@@ -185,11 +185,11 @@ func (t *trackingResponseWriter) end(tags *addedTags) {
 		if t.statusCode == 0 {
 			t.statusCode = 200
 		}
-
+		
 		span := trace.FromContext(t.ctx)
 		span.SetStatus(TraceStatus(t.statusCode, t.statusLine))
 		span.AddAttributes(trace.Int64Attribute(StatusCodeAttribute, int64(t.statusCode)))
-
+		
 		m := []stats.Measurement{
 			ServerLatency.M(float64(time.Since(t.start)) / float64(time.Millisecond)),
 			ServerResponseBytes.M(t.respSize),
@@ -237,7 +237,7 @@ func (t *trackingResponseWriter) wrappedResponseWriter() http.ResponseWriter {
 		fl, i3 = t.writer.(http.Flusher)
 		rf, i4 = t.writer.(io.ReaderFrom)
 	)
-
+	
 	switch {
 	case !i0 && !i1 && !i2 && !i3 && !i4:
 		return struct {

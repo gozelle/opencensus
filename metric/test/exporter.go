@@ -6,10 +6,10 @@ import (
 	"sort"
 	"strings"
 	"time"
-
-	"go.opencensus.io/metric/metricdata"
-	"go.opencensus.io/metric/metricexport"
-	"go.opencensus.io/stats/view"
+	
+	"github.com/gozelle/opencensus-go/metric/metricdata"
+	"github.com/gozelle/opencensus-go/metric/metricexport"
+	"github.com/gozelle/opencensus-go/stats/view"
 )
 
 // Exporter keeps exported metric data in memory to aid in testing the instrumentation.

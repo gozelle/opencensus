@@ -13,12 +13,12 @@
 // limitations under the License.
 
 // Package resourcekeys contains well known type and label keys for resources.
-package resourcekeys // import "go.opencensus.io/resource/resourcekeys"
+package resourcekeys // import "github.com/gozelle/opencensus-go/resource/resourcekeys"
 
 // Constants for Kubernetes resources.
 const (
 	K8SType = "k8s"
-
+	
 	// A uniquely identifying name for the Kubernetes cluster. Kubernetes
 	// does not have cluster names as an internal concept so this may be
 	// set to any meaningful value within the environment. For example,
@@ -32,7 +32,7 @@ const (
 // Constants for Container resources.
 const (
 	ContainerType = "container"
-
+	
 	// A uniquely identifying name for the Container.
 	ContainerKeyName      = "container.name"
 	ContainerKeyImageName = "container.image.name"
@@ -42,12 +42,12 @@ const (
 // Constants for Cloud resources.
 const (
 	CloudType = "cloud"
-
+	
 	CloudKeyProvider  = "cloud.provider"
 	CloudKeyAccountID = "cloud.account.id"
 	CloudKeyRegion    = "cloud.region"
 	CloudKeyZone      = "cloud.zone"
-
+	
 	// Cloud Providers
 	CloudProviderAWS   = "aws"
 	CloudProviderGCP   = "gcp"
@@ -57,10 +57,10 @@ const (
 // Constants for Host resources.
 const (
 	HostType = "host"
-
+	
 	// A uniquely identifying name for the host.
 	HostKeyName = "host.name"
-
+	
 	// A hostname as returned by the 'hostname' command on host machine.
 	HostKeyHostName = "host.hostname"
 	HostKeyID       = "host.id"

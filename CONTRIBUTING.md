@@ -28,13 +28,13 @@ information on using pull requests.
 Fork the repo, checkout the upstream repo to your GOPATH by:
 
 ```
-$ go get -d go.opencensus.io
+$ go get -d github.com/gozelle/opencensus-go
 ```
 
 Add your fork as an origin:
 
 ```
-cd $(go env GOPATH)/src/go.opencensus.io
+cd $(go env GOPATH)/src/github.com/gozelle/opencensus-go
 git remote add fork git@github.com:YOUR_GITHUB_USERNAME/opencensus-go.git
 ```
 

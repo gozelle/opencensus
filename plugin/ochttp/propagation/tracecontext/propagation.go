@@ -14,7 +14,7 @@
 
 // Package tracecontext contains HTTP propagator for TraceContext standard.
 // See https://github.com/w3c/distributed-tracing for more information.
-package tracecontext // import "go.opencensus.io/plugin/ochttp/propagation/tracecontext"
+package tracecontext // import "github.com/gozelle/opencensus-go/plugin/ochttp/propagation/tracecontext"
 
 import (
 	"encoding/hex"
@@ -23,10 +23,10 @@ import (
 	"net/textproto"
 	"regexp"
 	"strings"
-
-	"go.opencensus.io/trace"
-	"go.opencensus.io/trace/propagation"
-	"go.opencensus.io/trace/tracestate"
+	
+	"github.com/gozelle/opencensus-go/trace"
+	"github.com/gozelle/opencensus-go/trace/propagation"
+	"github.com/gozelle/opencensus-go/trace/tracestate"
 )
 
 const (
@@ -61,7 +61,7 @@ func (f *HTTPFormat) SpanContextFromHeaders(tp string, ts string) (sc trace.Span
 	if len(sections) < 4 {
 		return trace.SpanContext{}, false
 	}
-
+	
 	if len(sections[0]) != 2 {
 		return trace.SpanContext{}, false
 	}
@@ -73,11 +73,11 @@ func (f *HTTPFormat) SpanContextFromHeaders(tp string, ts string) (sc trace.Span
 	if version > maxVersion {
 		return trace.SpanContext{}, false
 	}
-
+	
 	if version == 0 && len(sections) != 4 {
 		return trace.SpanContext{}, false
 	}
-
+	
 	if len(sections[1]) != 32 {
 		return trace.SpanContext{}, false
 	}
@@ -86,7 +86,7 @@ func (f *HTTPFormat) SpanContextFromHeaders(tp string, ts string) (sc trace.Span
 		return trace.SpanContext{}, false
 	}
 	copy(sc.TraceID[:], tid)
-
+	
 	if len(sections[2]) != 16 {
 		return trace.SpanContext{}, false
 	}
@@ -95,18 +95,18 @@ func (f *HTTPFormat) SpanContextFromHeaders(tp string, ts string) (sc trace.Span
 		return trace.SpanContext{}, false
 	}
 	copy(sc.SpanID[:], sid)
-
+	
 	opts, err := hex.DecodeString(sections[3])
 	if err != nil || len(opts) < 1 {
 		return trace.SpanContext{}, false
 	}
 	sc.TraceOptions = trace.TraceOptions(opts[0])
-
+	
 	// Don't allow all zero trace or span ID.
 	if sc.TraceID == [16]byte{} || sc.SpanID == [8]byte{} {
 		return trace.SpanContext{}, false
 	}
-
+	
 	sc.Tracestate = tracestateFromHeader(ts)
 	return sc, true
 }
@@ -138,7 +138,7 @@ func tracestateFromHeader(ts string) *tracestate.Tracestate {
 	if ts == "" {
 		return nil
 	}
-
+	
 	var entries []tracestate.Entry
 	pairs := strings.Split(ts, ",")
 	hdrLenWithoutOWS := len(pairs) - 1 // Number of commas
@@ -162,7 +162,7 @@ func tracestateFromHeader(ts string) *tracestate.Tracestate {
 	if err != nil {
 		return nil
 	}
-
+	
 	return tsParsed
 }
 
@@ -173,7 +173,7 @@ func tracestateToHeader(sc trace.SpanContext) string {
 			pairs = append(pairs, strings.Join([]string{entry.Key, entry.Value}, "="))
 		}
 		h := strings.Join(pairs, ",")
-
+		
 		if h != "" && len(h) <= maxTracestateLen {
 			return h
 		}

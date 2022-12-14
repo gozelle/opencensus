@@ -6,10 +6,10 @@ import (
 	
 	"github.com/gozelle/testify/assert"
 	
-	"go.opencensus.io/metric/metricdata"
-	"go.opencensus.io/metric/metricexport"
-	"go.opencensus.io/metric/metricproducer"
-	"go.opencensus.io/plugin/runmetrics"
+	"github.com/gozelle/opencensus-go/metric/metricdata"
+	"github.com/gozelle/opencensus-go/metric/metricexport"
+	"github.com/gozelle/opencensus-go/metric/metricproducer"
+	"github.com/gozelle/opencensus-go/plugin/runmetrics"
 )
 
 type testExporter struct {

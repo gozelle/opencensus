@@ -17,11 +17,11 @@ package ocgrpc
 import (
 	"context"
 	"testing"
-
+	
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/stats"
-
-	"go.opencensus.io/trace"
+	
+	"github.com/gozelle/opencensus-go/trace"
 )
 
 func TestClientHandler_traceTagRPC(t *testing.T) {
@@ -32,7 +32,7 @@ func TestClientHandler_traceTagRPC(t *testing.T) {
 	}
 	ctx := context.Background()
 	ctx = ch.traceTagRPC(ctx, rti)
-
+	
 	span := trace.FromContext(ctx)
 	if span == nil {
 		t.Fatal("expected span, got nil")

@@ -20,12 +20,12 @@ import (
 	"reflect"
 	"testing"
 	"time"
-
+	
 	"fmt"
 	"net/http"
 	"net/http/httptest"
-
-	"go.opencensus.io/trace"
+	
+	"github.com/gozelle/opencensus-go/trace"
 )
 
 var (
@@ -74,7 +74,7 @@ func TestTraceRows(t *testing.T) {
 			{Fields: [3]string{fakeTime, "     .500000", "sent message [200 bytes, 100 compressed bytes]"}}}}); !reflect.DeepEqual(data, want) {
 		t.Errorf("traceRows: got %v want %v\n", data, want)
 	}
-
+	
 	var buf bytes.Buffer
 	writeTextTraces(&buf, data)
 	if want := `When                       Elapsed(s)   Type

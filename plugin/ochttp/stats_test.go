@@ -18,10 +18,10 @@ import (
 	"reflect"
 	"strings"
 	"testing"
-
-	"go.opencensus.io/stats"
-	"go.opencensus.io/stats/view"
-	"go.opencensus.io/tag"
+	
+	"github.com/gozelle/opencensus-go/stats"
+	"github.com/gozelle/opencensus-go/stats/view"
+	"github.com/gozelle/opencensus-go/tag"
 )
 
 func TestClientViews(t *testing.T) {
@@ -31,7 +31,7 @@ func TestClientViews(t *testing.T) {
 		ClientRoundtripLatencyDistribution,
 		ClientCompletedCount,
 	} {
-
+		
 		if v.Measure == nil {
 			t.Fatalf("nil measure: %v", v)
 		}

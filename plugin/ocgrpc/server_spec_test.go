@@ -18,9 +18,9 @@ package ocgrpc
 import (
 	"strings"
 	"testing"
-
-	"go.opencensus.io/stats"
-	"go.opencensus.io/stats/view"
+	
+	"github.com/gozelle/opencensus-go/stats"
+	"github.com/gozelle/opencensus-go/stats/view"
 )
 
 func TestSpecServerMeasures(t *testing.T) {
@@ -32,7 +32,7 @@ func TestSpecServerMeasures(t *testing.T) {
 | grpc.io/server/sent_messages_per_rpc     | 1    | Number of messages sent in each RPC. Has value 1 for non-streaming RPCs.                      |
 | grpc.io/server/sent_bytes_per_rpc        | By   | Total bytes sent in across all response messages per RPC.                                     |
 | grpc.io/server/server_latency            | ms   | Time between first byte of request received to last byte of response sent, or terminal error. |`
-
+	
 	lines := strings.Split(spec, "\n")[3:]
 	type measureDef struct {
 		name string
@@ -47,7 +47,7 @@ func TestSpecServerMeasures(t *testing.T) {
 		}
 		measureDefs = append(measureDefs, measureDef{cols[0], cols[1], cols[2]})
 	}
-
+	
 	gotMeasures := []stats.Measure{
 		ServerReceivedMessagesPerRPC,
 		ServerReceivedBytesPerRPC,
@@ -55,11 +55,11 @@ func TestSpecServerMeasures(t *testing.T) {
 		ServerSentBytesPerRPC,
 		ServerLatency,
 	}
-
+	
 	if got, want := len(gotMeasures), len(measureDefs); got != want {
 		t.Fatalf("len(gotMeasures) = %d; want %d", got, want)
 	}
-
+	
 	for i, m := range gotMeasures {
 		defn := measureDefs[i]
 		if got, want := m.Name(), defn.name; got != want {
@@ -82,13 +82,13 @@ func TestSpecServerViews(t *testing.T) {
 | grpc.io/server/sent_bytes_per_rpc     | sent_bytes_per_rpc     | distribution | server_method                |
 | grpc.io/server/server_latency         | server_latency         | distribution | server_method                |
 | grpc.io/server/completed_rpcs         | server_latency         | count        | server_method, server_status |`
-
+	
 	extraViewsSpec := `
 | View name                                | Measure suffix            | Aggregation  | Tags suffix   |
 |------------------------------------------|---------------------------|--------------|---------------|
 | grpc.io/server/received_messages_per_rpc | received_messages_per_rpc | distribution | server_method |
 | grpc.io/server/sent_messages_per_rpc     | sent_messages_per_rpc     | distribution | server_method |`
-
+	
 	lines := strings.Split(defaultViewsSpec, "\n")[3:]
 	lines = append(lines, strings.Split(extraViewsSpec, "\n")[3:]...)
 	type viewDef struct {
@@ -105,14 +105,14 @@ func TestSpecServerViews(t *testing.T) {
 		}
 		viewDefs = append(viewDefs, viewDef{cols[0], cols[1], cols[2], cols[3]})
 	}
-
+	
 	views := DefaultServerViews
 	views = append(views, ServerReceivedMessagesPerRPCView, ServerSentMessagesPerRPCView)
-
+	
 	if got, want := len(views), len(viewDefs); got != want {
 		t.Fatalf("len(gotMeasures) = %d; want %d", got, want)
 	}
-
+	
 	for i, v := range views {
 		defn := viewDefs[i]
 		if got, want := v.Name, defn.name; got != want {

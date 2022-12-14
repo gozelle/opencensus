@@ -19,15 +19,15 @@ import (
 	"sort"
 	"testing"
 	"time"
-
+	
 	"github.com/google/go-cmp/cmp"
-
-	"go.opencensus.io/metric/metricdata"
+	
+	"github.com/gozelle/opencensus-go/metric/metricdata"
 )
 
 func TestGauge(t *testing.T) {
 	r := NewRegistry()
-
+	
 	f, _ := r.AddFloat64Gauge("TestGauge",
 		WithLabelKeys("k1", "k2"))
 	e, _ := f.GetEntry(metricdata.LabelValue{}, metricdata.LabelValue{})
@@ -88,14 +88,14 @@ func TestGauge(t *testing.T) {
 
 func TestGaugeConstLabel(t *testing.T) {
 	r := NewRegistry()
-
+	
 	f, _ := r.AddFloat64Gauge("TestGaugeWithConstLabel",
 		WithLabelKeys("k1"),
 		WithConstLabel(map[metricdata.LabelKey]metricdata.LabelValue{
 			{Key: "const"}:  metricdata.NewLabelValue("same"),
 			{Key: "const2"}: metricdata.NewLabelValue("same2"),
 		}))
-
+	
 	e, _ := f.GetEntry(metricdata.LabelValue{})
 	e.Set(5)
 	e, _ = f.GetEntry(metricdata.NewLabelValue("k1v1"))
@@ -144,7 +144,7 @@ func TestGaugeConstLabel(t *testing.T) {
 
 func TestGaugeMetricDescriptor(t *testing.T) {
 	r := NewRegistry()
-
+	
 	gf, _ := r.AddFloat64Gauge("float64_gauge")
 	compareType(gf.bm.desc.Type, metricdata.TypeGaugeFloat64, t)
 	gi, _ := r.AddInt64Gauge("int64_gauge")
@@ -360,7 +360,7 @@ func TestMapKey(t *testing.T) {
 
 func TestRaceCondition(t *testing.T) {
 	r := NewRegistry()
-
+	
 	// start reader before adding Gauge metric.
 	var ms = []*metricdata.Metric{}
 	for i := 0; i < 5; i++ {
@@ -388,16 +388,16 @@ func canonicalize(ms []*metricdata.Metric) {
 		sort.Slice(m.TimeSeries, func(i, j int) bool {
 			// sort time series by their label values
 			iStr := ""
-
+			
 			for _, label := range m.TimeSeries[i].LabelValues {
 				iStr += fmt.Sprintf("%+v", label)
 			}
-
+			
 			jStr := ""
 			for _, label := range m.TimeSeries[j].LabelValues {
 				jStr += fmt.Sprintf("%+v", label)
 			}
-
+			
 			return iStr < jStr
 		})
 	}

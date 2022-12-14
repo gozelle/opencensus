@@ -38,11 +38,11 @@ import (
 	"strings"
 	"sync"
 	"time"
-
-	"go.opencensus.io/examples/exporter"
-	"go.opencensus.io/metric"
-	"go.opencensus.io/metric/metricdata"
-	"go.opencensus.io/metric/metricproducer"
+	
+	"github.com/gozelle/opencensus-go/examples/exporter"
+	"github.com/gozelle/opencensus-go/metric"
+	"github.com/gozelle/opencensus-go/metric/metricdata"
+	"github.com/gozelle/opencensus-go/metric/metricproducer"
 )
 
 const (
@@ -52,7 +52,7 @@ const (
 type queue struct {
 	size         int
 	lastConsumed time.Time
-
+	
 	mu sync.Mutex
 	q  []int
 }
@@ -71,7 +71,7 @@ func init() {
 func (q *queue) consume() {
 	q.mu.Lock()
 	defer q.mu.Unlock()
-
+	
 	consumeCount := rand.Int() % maxItemsToConsumePerAttempt
 	i := 0
 	for i = 0; i < consumeCount; i++ {
@@ -91,7 +91,7 @@ func (q *queue) consume() {
 func (q *queue) produce(count int) {
 	q.mu.Lock()
 	defer q.mu.Unlock()
-
+	
 	for i := 0; i < count; i++ {
 		v := rand.Int() % 100
 		q.q = append(q.q, v)
@@ -159,7 +159,7 @@ func doWork() {
 	fmt.Printf("   2. queue_seconds_since_processed_last = the number of seconds elapsed since last time the queue was processed.\n")
 	fmt.Printf("\nGo to file://%s to see the metrics. OR do `tail -f %s` in another terminal\n\n\n",
 		metricsLogFile, metricsLogFile)
-
+	
 	// Take a number of items to queue as an input from the user
 	// and enqueue the same number of items on to the consumer queue.
 	for {
@@ -181,13 +181,13 @@ func main() {
 	exporter.Start()
 	defer exporter.Stop()
 	defer exporter.Close()
-
+	
 	// Create metric registry and register it with global producer manager.
 	// START reg
 	r := metric.NewRegistry()
 	metricproducer.GlobalManager().AddProducer(r)
 	// END reg
-
+	
 	// Create Int64DerviedGauge
 	// START size
 	queueSizeGauge, err := r.AddInt64DerivedGauge(
@@ -198,14 +198,14 @@ func main() {
 		log.Fatalf("error creating queue size derived gauge, error %v\n", err)
 	}
 	// END size
-
+	
 	// START entrySize
 	err = queueSizeGauge.UpsertEntry(q.Size)
 	if err != nil {
 		log.Fatalf("error getting queue size derived gauge entry, error %v\n", err)
 	}
 	// END entrySize
-
+	
 	// Create Float64DerviedGauge
 	// START elapsed
 	elapsedSeconds, err := r.AddFloat64DerivedGauge(
@@ -216,19 +216,19 @@ func main() {
 		log.Fatalf("error creating queue_seconds_since_processed_last derived gauge, error %v\n", err)
 	}
 	// END elapsed
-
+	
 	// START entryElapsed
 	err = elapsedSeconds.UpsertEntry(q.Elapsed)
 	if err != nil {
 		log.Fatalf("error getting queue_seconds_since_processed_last derived gauge entry, error %v\n", err)
 	}
 	// END entryElapsed
-
+	
 	quit := make(chan bool)
 	defer func() {
 		close(quit)
 	}()
-
+	
 	// Run consumer and producer
 	go q.runConsumer(5*time.Second, quit)
 

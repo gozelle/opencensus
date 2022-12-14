@@ -19,26 +19,26 @@ import (
 	"context"
 	"reflect"
 	"testing"
-
+	
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/stats"
 	"google.golang.org/grpc/status"
-
-	"go.opencensus.io/metric/metricdata"
-	"go.opencensus.io/stats/view"
-	"go.opencensus.io/tag"
-	"go.opencensus.io/trace"
+	
+	"github.com/gozelle/opencensus-go/metric/metricdata"
+	"github.com/gozelle/opencensus-go/stats/view"
+	"github.com/gozelle/opencensus-go/tag"
+	"github.com/gozelle/opencensus-go/trace"
 )
 
 func TestServerDefaultCollections(t *testing.T) {
 	k1 := tag.MustNewKey("k1")
 	k2 := tag.MustNewKey("k2")
-
+	
 	type tagPair struct {
 		k tag.Key
 		v string
 	}
-
+	
 	type wantData struct {
 		v    func() *view.View
 		rows []*view.Row
@@ -50,13 +50,13 @@ func TestServerDefaultCollections(t *testing.T) {
 		outPayloads []*stats.OutPayload
 		end         *stats.End
 	}
-
+	
 	type testCase struct {
 		label string
 		rpcs  []*rpc
 		wants []*wantData
 	}
-
+	
 	tcs := []testCase{
 		{
 			"1",
@@ -266,14 +266,14 @@ func TestServerDefaultCollections(t *testing.T) {
 			},
 		},
 	}
-
+	
 	views := append(DefaultServerViews[:], ServerReceivedMessagesPerRPCView, ServerSentMessagesPerRPCView)
-
+	
 	for _, tc := range tcs {
 		if err := view.Register(views...); err != nil {
 			t.Fatal(err)
 		}
-
+		
 		h := &ServerHandler{}
 		h.StartOptions.Sampler = trace.NeverSample()
 		for _, rpc := range tc.rpcs {
@@ -288,7 +288,7 @@ func TestServerDefaultCollections(t *testing.T) {
 			encoded := tag.Encode(tag.FromContext(ctx))
 			ctx = stats.SetTags(context.Background(), encoded)
 			ctx = h.TagRPC(ctx, rpc.tagInfo)
-
+			
 			for _, in := range rpc.inPayloads {
 				h.HandleRPC(ctx, in)
 			}
@@ -297,25 +297,25 @@ func TestServerDefaultCollections(t *testing.T) {
 			}
 			h.HandleRPC(ctx, rpc.end)
 		}
-
+		
 		for _, wantData := range tc.wants {
 			gotRows, err := view.RetrieveData(wantData.v().Name)
 			if err != nil {
 				t.Errorf("%q: RetrieveData (%q) = %v", tc.label, wantData.v().Name, err)
 				continue
 			}
-
+			
 			for i := range gotRows {
 				view.ClearStart(gotRows[i].Data)
 			}
-
+			
 			for _, gotRow := range gotRows {
 				if !containsRow(wantData.rows, gotRow) {
 					t.Errorf("%q: unwanted row for view %q: %v", tc.label, wantData.v().Name, gotRow)
 					break
 				}
 			}
-
+			
 			for _, wantRow := range wantData.rows {
 				if !containsRow(gotRows, wantRow) {
 					t.Errorf("%q: missing row for view %q: %v", tc.label, wantData.v().Name, wantRow)
@@ -323,7 +323,7 @@ func TestServerDefaultCollections(t *testing.T) {
 				}
 			}
 		}
-
+		
 		// Unregister views to cleanup.
 		view.Unregister(views...)
 	}
@@ -345,7 +345,7 @@ func TestServerRecordExemplar(t *testing.T) {
 	tagInfo := &stats.RPCTagInfo{FullMethodName: "/package.service/method"}
 	out := &stats.OutPayload{Length: 2000}
 	end := &stats.End{Error: nil}
-
+	
 	if err := view.Register(ServerSentBytesPerRPCView); err != nil {
 		t.Error(err)
 	}
@@ -358,12 +358,12 @@ func TestServerRecordExemplar(t *testing.T) {
 	encoded := tag.Encode(tag.FromContext(ctx))
 	ctx = stats.SetTags(context.Background(), encoded)
 	ctx = h.TagRPC(ctx, tagInfo)
-
+	
 	out.Client = false
 	h.HandleRPC(ctx, out)
 	end.Client = false
 	h.HandleRPC(ctx, end)
-
+	
 	span := trace.FromContext(ctx)
 	if span == nil {
 		t.Fatal("expected non-nil span, got nil")
@@ -373,7 +373,7 @@ func TestServerRecordExemplar(t *testing.T) {
 	}
 	attachments := map[string]interface{}{metricdata.AttachmentKeySpanContext: span.SpanContext()}
 	wantExemplar := &metricdata.Exemplar{Value: 2000, Attachments: attachments}
-
+	
 	rows, err := view.RetrieveData(ServerSentBytesPerRPCView.Name)
 	if err != nil {
 		t.Fatal("Error RetrieveData ", err)
@@ -401,7 +401,7 @@ func TestServerRecordExemplar(t *testing.T) {
 			t.Errorf("want nil exemplar, got %v", e)
 		}
 	}
-
+	
 	// Unregister views to cleanup.
 	view.Unregister(ServerSentBytesPerRPCView)
 }

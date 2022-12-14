@@ -18,8 +18,8 @@ import (
 	"net/http"
 	"reflect"
 	"testing"
-
-	"go.opencensus.io/trace"
+	
+	"github.com/gozelle/opencensus-go/trace"
 )
 
 func TestHTTPFormat_FromRequest(t *testing.T) {
@@ -221,7 +221,7 @@ func TestHTTPFormat_ToRequest(t *testing.T) {
 			f := &HTTPFormat{}
 			req, _ := http.NewRequest("GET", "http://example.com", nil)
 			f.SpanContextToRequest(tt.sc, req)
-
+			
 			for k, v := range tt.wantHeaders {
 				if got, want := req.Header.Get(k), v; got != want {
 					t.Errorf("req.Header.Get(%q) = %q; want %q", k, got, want)

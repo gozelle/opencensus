@@ -20,10 +20,10 @@ import (
 	"sync"
 	"testing"
 	"time"
-
-	"go.opencensus.io/metric"
-	"go.opencensus.io/metric/metricdata"
-	"go.opencensus.io/metric/metricproducer"
+	
+	"github.com/gozelle/opencensus-go/metric"
+	"github.com/gozelle/opencensus-go/metric/metricdata"
+	"github.com/gozelle/opencensus-go/metric/metricproducer"
 )
 
 var (
@@ -45,7 +45,7 @@ type metricExporter struct {
 func (e *metricExporter) ExportMetrics(ctx context.Context, metrics []*metricdata.Metric) error {
 	e.Lock()
 	defer e.Unlock()
-
+	
 	e.metrics = append(e.metrics, metrics...)
 	return nil
 }
@@ -62,7 +62,7 @@ func init() {
 
 func TestNewReaderWitDefaultOptions(t *testing.T) {
 	r := NewReader()
-
+	
 	if r.spanName != defaultSpanName {
 		t.Errorf("span name: got %v, want %v\n", r.spanName, defaultSpanName)
 	}
@@ -71,7 +71,7 @@ func TestNewReaderWitDefaultOptions(t *testing.T) {
 func TestNewReaderWitSpanName(t *testing.T) {
 	spanName := "test-span"
 	r := NewReader(WithSpanName(spanName))
-
+	
 	if r.spanName != spanName {
 		t.Errorf("span name: got %+v, want %v\n", r.spanName, spanName)
 	}
@@ -79,11 +79,11 @@ func TestNewReaderWitSpanName(t *testing.T) {
 
 func TestNewReader(t *testing.T) {
 	r := NewReader()
-
+	
 	gaugeEntry.Add(1)
-
+	
 	r.ReadAndExport(exporter1)
-
+	
 	checkExportedCount(exporter1, 1, t)
 	checkExportedMetricDesc(exporter1, "active_request", t)
 	resetExporter(exporter1)
@@ -91,9 +91,9 @@ func TestNewReader(t *testing.T) {
 
 func TestNewIntervalReader(t *testing.T) {
 	ir1 = createAndStart(exporter1, duration1, t)
-
+	
 	gaugeEntry.Add(1)
-
+	
 	time.Sleep(1500 * time.Millisecond)
 	checkExportedCount(exporter1, 1, t)
 	checkExportedMetricDesc(exporter1, "active_request", t)
@@ -103,13 +103,13 @@ func TestNewIntervalReader(t *testing.T) {
 
 func TestManualReadForIntervalReader(t *testing.T) {
 	ir1 = createAndStart(exporter1, duration1, t)
-
+	
 	gaugeEntry.Set(1)
 	reader1.ReadAndExport(exporter1)
 	gaugeEntry.Set(4)
-
+	
 	time.Sleep(1500 * time.Millisecond)
-
+	
 	checkExportedCount(exporter1, 2, t)
 	checkExportedValues(exporter1, []int64{1, 4}, t) // one for manual read other for time based.
 	checkExportedMetricDesc(exporter1, "active_request", t)
@@ -119,12 +119,12 @@ func TestManualReadForIntervalReader(t *testing.T) {
 
 func TestFlushNoOpForIntervalReader(t *testing.T) {
 	ir1 = createAndStart(exporter1, duration1, t)
-
+	
 	gaugeEntry.Set(1)
-
+	
 	// since IR is not stopped, flush does nothing
 	ir1.Flush()
-
+	
 	// expect no data points
 	checkExportedCount(exporter1, 0, t)
 	checkExportedMetricDesc(exporter1, "active_request", t)
@@ -134,60 +134,60 @@ func TestFlushNoOpForIntervalReader(t *testing.T) {
 
 func TestFlushAllowMultipleForIntervalReader(t *testing.T) {
 	ir1 = createAndStart(exporter1, duration1, t)
-
+	
 	gaugeEntry.Set(1)
-
+	
 	ir1.Stop()
 	ir1.Flush()
-
+	
 	// metric is still coming in
 	gaugeEntry.Add(1)
-
+	
 	// one more flush after IR stopped
 	ir1.Flush()
-
+	
 	// expect 2 data point, one from each flush
 	checkExportedCount(exporter1, 2, t)
 	checkExportedValues(exporter1, []int64{1, 2}, t)
 	checkExportedMetricDesc(exporter1, "active_request", t)
-
+	
 	resetExporter(exporter1)
 }
 
 func TestFlushRestartForIntervalReader(t *testing.T) {
 	ir1 = createAndStart(exporter1, duration1, t)
-
+	
 	gaugeEntry.Set(1)
 	ir1.Stop()
 	ir1.Flush()
-
+	
 	// restart the IR
 	err := ir1.Start()
 	if err != nil {
 		t.Fatalf("error starting reader %v\n", err)
 	}
-
+	
 	gaugeEntry.Add(1)
-
+	
 	ir1.Stop()
 	ir1.Flush()
-
+	
 	// expect 2 data point, one from each flush
 	checkExportedCount(exporter1, 2, t)
 	checkExportedValues(exporter1, []int64{1, 2}, t)
 	checkExportedMetricDesc(exporter1, "active_request", t)
-
+	
 	resetExporter(exporter1)
 }
 
 func TestProducerWithIntervalReaderStop(t *testing.T) {
 	ir1 = createAndStart(exporter1, duration1, t)
 	ir1.Stop()
-
+	
 	gaugeEntry.Add(1)
-
+	
 	time.Sleep(1500 * time.Millisecond)
-
+	
 	checkExportedCount(exporter1, 0, t)
 	checkExportedMetricDesc(exporter1, "active_request", t)
 	resetExporter(exporter1)
@@ -196,11 +196,11 @@ func TestProducerWithIntervalReaderStop(t *testing.T) {
 func TestProducerWithMultipleIntervalReaders(t *testing.T) {
 	ir1 = createAndStart(exporter1, duration1, t)
 	ir2 = createAndStart(exporter2, duration2, t)
-
+	
 	gaugeEntry.Add(1)
-
+	
 	time.Sleep(2500 * time.Millisecond)
-
+	
 	checkExportedCount(exporter1, 2, t)
 	checkExportedMetricDesc(exporter1, "active_request", t)
 	checkExportedCount(exporter2, 1, t)
@@ -219,7 +219,7 @@ func TestIntervalReaderMultipleStop(t *testing.T) {
 		ir1.Stop()
 		stop <- true
 	}()
-
+	
 	select {
 	case _ = <-stop:
 	case <-time.After(1 * time.Second):
@@ -233,11 +233,11 @@ func TestIntervalReaderMultipleStart(t *testing.T) {
 	if err == nil {
 		t.Fatalf("expected error but got nil\n")
 	}
-
+	
 	gaugeEntry.Add(1)
-
+	
 	time.Sleep(1500 * time.Millisecond)
-
+	
 	checkExportedCount(exporter1, 1, t)
 	checkExportedMetricDesc(exporter1, "active_request", t)
 	ir1.Stop()

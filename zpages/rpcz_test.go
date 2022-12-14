@@ -19,36 +19,36 @@ import (
 	"context"
 	"testing"
 	"time"
-
-	"go.opencensus.io/internal/testpb"
-	"go.opencensus.io/stats/view"
+	
+	"github.com/gozelle/opencensus-go/internal/testpb"
+	"github.com/gozelle/opencensus-go/stats/view"
 )
 
 func TestRpcz(t *testing.T) {
 	client, cleanup := testpb.NewTestClient(t)
 	defer cleanup()
-
+	
 	_, err := client.Single(context.Background(), &testpb.FooRequest{})
 	if err != nil {
 		t.Fatal(err)
 	}
-
+	
 	view.SetReportingPeriod(time.Millisecond)
 	time.Sleep(2 * time.Millisecond)
 	view.SetReportingPeriod(time.Second)
-
+	
 	mu.Lock()
 	defer mu.Unlock()
-
+	
 	if len(snaps) == 0 {
 		t.Fatal("Expected len(snaps) > 0")
 	}
-
+	
 	snapshot, ok := snaps[methodKey{"testpb.Foo/Single", false}]
 	if !ok {
 		t.Fatal("Expected method stats not recorded")
 	}
-
+	
 	if got, want := snapshot.CountTotal, uint64(1); got != want {
 		t.Errorf("snapshot.CountTotal = %d; want %d", got, want)
 	}

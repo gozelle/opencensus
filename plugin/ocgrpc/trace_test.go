@@ -19,9 +19,9 @@ import (
 	"io"
 	"testing"
 	"time"
-
-	"go.opencensus.io/internal/testpb"
-	"go.opencensus.io/trace"
+	
+	"github.com/gozelle/opencensus-go/internal/testpb"
+	"github.com/gozelle/opencensus-go/trace"
 )
 
 type testExporter struct {
@@ -37,20 +37,20 @@ func TestStreaming(t *testing.T) {
 	te := testExporter{make(chan *trace.SpanData)}
 	trace.RegisterExporter(&te)
 	defer trace.UnregisterExporter(&te)
-
+	
 	client, cleanup := testpb.NewTestClient(t)
-
+	
 	stream, err := client.Multiple(context.Background())
 	if err != nil {
 		t.Fatalf("Call failed: %v", err)
 	}
-
+	
 	err = stream.Send(&testpb.FooRequest{})
 	if err != nil {
 		t.Fatalf("Couldn't send streaming request: %v", err)
 	}
 	stream.CloseSend()
-
+	
 	for {
 		_, err := stream.Recv()
 		if err == io.EOF {
@@ -60,14 +60,14 @@ func TestStreaming(t *testing.T) {
 			t.Errorf("stream.Recv() = %v; want no errors", err)
 		}
 	}
-
+	
 	cleanup()
-
+	
 	s1 := <-te.ch
 	s2 := <-te.ch
-
+	
 	checkSpanData(t, s1, s2, "testpb.Foo.Multiple", true)
-
+	
 	select {
 	case <-te.ch:
 		t.Fatal("received extra exported spans")
@@ -80,20 +80,20 @@ func TestStreamingFail(t *testing.T) {
 	te := testExporter{make(chan *trace.SpanData)}
 	trace.RegisterExporter(&te)
 	defer trace.UnregisterExporter(&te)
-
+	
 	client, cleanup := testpb.NewTestClient(t)
-
+	
 	stream, err := client.Multiple(context.Background())
 	if err != nil {
 		t.Fatalf("Call failed: %v", err)
 	}
-
+	
 	err = stream.Send(&testpb.FooRequest{Fail: true})
 	if err != nil {
 		t.Fatalf("Couldn't send streaming request: %v", err)
 	}
 	stream.CloseSend()
-
+	
 	for {
 		_, err := stream.Recv()
 		if err == nil || err == io.EOF {
@@ -102,13 +102,13 @@ func TestStreamingFail(t *testing.T) {
 			break
 		}
 	}
-
+	
 	s1 := <-te.ch
 	s2 := <-te.ch
-
+	
 	checkSpanData(t, s1, s2, "testpb.Foo.Multiple", false)
 	cleanup()
-
+	
 	select {
 	case <-te.ch:
 		t.Fatal("received extra exported spans")
@@ -121,20 +121,20 @@ func TestSingle(t *testing.T) {
 	te := testExporter{make(chan *trace.SpanData)}
 	trace.RegisterExporter(&te)
 	defer trace.UnregisterExporter(&te)
-
+	
 	client, cleanup := testpb.NewTestClient(t)
-
+	
 	_, err := client.Single(context.Background(), &testpb.FooRequest{})
 	if err != nil {
 		t.Fatalf("Couldn't send request: %v", err)
 	}
-
+	
 	s1 := <-te.ch
 	s2 := <-te.ch
-
+	
 	checkSpanData(t, s1, s2, "testpb.Foo.Single", true)
 	cleanup()
-
+	
 	select {
 	case <-te.ch:
 		t.Fatal("received extra exported spans")
@@ -145,13 +145,13 @@ func TestSingle(t *testing.T) {
 func TestServerSpanDuration(t *testing.T) {
 	client, cleanup := testpb.NewTestClient(t)
 	defer cleanup()
-
+	
 	te := testExporter{make(chan *trace.SpanData, 100)}
 	trace.RegisterExporter(&te)
 	defer trace.UnregisterExporter(&te)
-
+	
 	trace.ApplyConfig(trace.Config{DefaultSampler: trace.AlwaysSample()})
-
+	
 	ctx := context.Background()
 	const sleep = 100 * time.Millisecond
 	client.Single(ctx, &testpb.FooRequest{SleepNanos: int64(sleep)})
@@ -178,20 +178,20 @@ func TestSingleFail(t *testing.T) {
 	te := testExporter{make(chan *trace.SpanData)}
 	trace.RegisterExporter(&te)
 	defer trace.UnregisterExporter(&te)
-
+	
 	client, cleanup := testpb.NewTestClient(t)
-
+	
 	_, err := client.Single(context.Background(), &testpb.FooRequest{Fail: true})
 	if err == nil {
 		t.Fatalf("Got nil error from request, want non-nil")
 	}
-
+	
 	s1 := <-te.ch
 	s2 := <-te.ch
-
+	
 	checkSpanData(t, s1, s2, "testpb.Foo.Single", false)
 	cleanup()
-
+	
 	select {
 	case <-te.ch:
 		t.Fatal("received extra exported spans")
@@ -201,11 +201,11 @@ func TestSingleFail(t *testing.T) {
 
 func checkSpanData(t *testing.T, s1, s2 *trace.SpanData, methodName string, success bool) {
 	t.Helper()
-
+	
 	if s1.SpanKind == trace.SpanKindServer {
 		s1, s2 = s2, s1
 	}
-
+	
 	if got, want := s1.Name, methodName; got != want {
 		t.Errorf("Got name %q want %q", got, want)
 	}

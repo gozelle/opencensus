@@ -18,9 +18,9 @@ package view
 import (
 	"sort"
 	"time"
-
-	"go.opencensus.io/internal/tagencoding"
-	"go.opencensus.io/tag"
+	
+	"github.com/gozelle/opencensus-go/internal/tagencoding"
+	"github.com/gozelle/opencensus-go/tag"
 )
 
 type collector struct {

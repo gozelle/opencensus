@@ -18,10 +18,10 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptrace"
-
-	"go.opencensus.io/plugin/ochttp/propagation/b3"
-	"go.opencensus.io/trace"
-	"go.opencensus.io/trace/propagation"
+	
+	"github.com/gozelle/opencensus-go/plugin/ochttp/propagation/b3"
+	"github.com/gozelle/opencensus-go/trace"
+	"github.com/gozelle/opencensus-go/trace/propagation"
 )
 
 // TODO(jbd): Add godoc examples.
@@ -59,13 +59,13 @@ func (t *traceTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	ctx, span := trace.StartSpan(req.Context(), name,
 		trace.WithSampler(t.startOptions.Sampler),
 		trace.WithSpanKind(trace.SpanKindClient))
-
+	
 	if t.newClientTrace != nil {
 		req = req.WithContext(httptrace.WithClientTrace(ctx, t.newClientTrace(req, span)))
 	} else {
 		req = req.WithContext(ctx)
 	}
-
+	
 	if t.format != nil {
 		// SpanContextToRequest will modify its Request argument, which is
 		// contrary to the contract for http.RoundTripper, so we need to
@@ -79,7 +79,7 @@ func (t *traceTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 		req.Header = header
 		t.format.SpanContextToRequest(span.SpanContext(), req)
 	}
-
+	
 	span.AddAttributes(requestAttrs(req)...)
 	resp, err := t.base.RoundTrip(req)
 	if err != nil {
@@ -87,10 +87,10 @@ func (t *traceTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 		span.End()
 		return resp, err
 	}
-
+	
 	span.AddAttributes(responseAttrs(resp)...)
 	span.SetStatus(TraceStatus(resp.StatusCode, resp.Status))
-
+	
 	// span.End() will be invoked after
 	// a read from resp.Body returns io.EOF or when
 	// resp.Body.Close() is invoked.
@@ -111,7 +111,7 @@ var _ io.ReadCloser = (*bodyTracker)(nil)
 
 func (bt *bodyTracker) Read(b []byte) (int, error) {
 	n, err := bt.rc.Read(b)
-
+	
 	switch err {
 	case nil:
 		return n, nil
@@ -152,7 +152,7 @@ func spanNameFromURL(req *http.Request) string {
 
 func requestAttrs(r *http.Request) []trace.Attribute {
 	userAgent := r.UserAgent()
-
+	
 	attrs := make([]trace.Attribute, 0, 5)
 	attrs = append(attrs,
 		trace.StringAttribute(PathAttribute, r.URL.Path),
@@ -160,11 +160,11 @@ func requestAttrs(r *http.Request) []trace.Attribute {
 		trace.StringAttribute(HostAttribute, r.Host),
 		trace.StringAttribute(MethodAttribute, r.Method),
 	)
-
+	
 	if userAgent != "" {
 		attrs = append(attrs, trace.StringAttribute(UserAgentAttribute, userAgent))
 	}
-
+	
 	return attrs
 }
 
@@ -207,7 +207,7 @@ func TraceStatus(httpStatusCode int, statusLine string) trace.Status {
 	case http.StatusConflict:
 		code = trace.StatusCodeAlreadyExists
 	}
-
+	
 	return trace.Status{Code: code, Message: codeToStr[code]}
 }
 

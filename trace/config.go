@@ -16,27 +16,27 @@ package trace
 
 import (
 	"sync"
-
-	"go.opencensus.io/trace/internal"
+	
+	"github.com/gozelle/opencensus-go/trace/internal"
 )
 
 // Config represents the global tracing configuration.
 type Config struct {
 	// DefaultSampler is the default sampler used when creating new spans.
 	DefaultSampler Sampler
-
+	
 	// IDGenerator is for internal use only.
 	IDGenerator internal.IDGenerator
-
+	
 	// MaxAnnotationEventsPerSpan is max number of annotation events per span
 	MaxAnnotationEventsPerSpan int
-
+	
 	// MaxMessageEventsPerSpan is max number of message events per span
 	MaxMessageEventsPerSpan int
-
+	
 	// MaxAnnotationEventsPerSpan is max number of attributes per span
 	MaxAttributesPerSpan int
-
+	
 	// MaxLinksPerSpan is max number of links per span
 	MaxLinksPerSpan int
 }
@@ -46,13 +46,13 @@ var configWriteMu sync.Mutex
 const (
 	// DefaultMaxAnnotationEventsPerSpan is default max number of annotation events per span
 	DefaultMaxAnnotationEventsPerSpan = 32
-
+	
 	// DefaultMaxMessageEventsPerSpan is default max number of message events per span
 	DefaultMaxMessageEventsPerSpan = 128
-
+	
 	// DefaultMaxAttributesPerSpan is default max number of attributes per span
 	DefaultMaxAttributesPerSpan = 32
-
+	
 	// DefaultMaxLinksPerSpan is default max number of links per span
 	DefaultMaxLinksPerSpan = 32
 )

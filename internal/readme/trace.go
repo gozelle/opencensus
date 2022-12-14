@@ -16,17 +16,17 @@ package readme
 
 import (
 	"context"
-
-	"go.opencensus.io/trace"
+	
+	"github.com/gozelle/opencensus-go/trace"
 )
 
 func traceExamples() {
 	ctx := context.Background()
-
+	
 	// START startend
 	ctx, span := trace.StartSpan(ctx, "cache.Get")
 	defer span.End()
-
+	
 	// Do work to get from cache.
 	// END startend
 }

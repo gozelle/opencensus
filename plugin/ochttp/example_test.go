@@ -17,19 +17,19 @@ package ochttp_test
 import (
 	"log"
 	"net/http"
-
-	"go.opencensus.io/plugin/ochttp"
-	"go.opencensus.io/plugin/ochttp/propagation/b3"
-	"go.opencensus.io/stats/view"
-	"go.opencensus.io/tag"
+	
+	"github.com/gozelle/opencensus-go/plugin/ochttp"
+	"github.com/gozelle/opencensus-go/plugin/ochttp/propagation/b3"
+	"github.com/gozelle/opencensus-go/stats/view"
+	"github.com/gozelle/opencensus-go/tag"
 )
 
 func ExampleTransport() {
 	// import (
-	// 		"go.opencensus.io/plugin/ochttp"
-	//		"go.opencensus.io/stats/view"
+	// 		"github.com/gozelle/opencensus-go/plugin/ochttp"
+	//		"github.com/gozelle/opencensus-go/stats/view"
 	// )
-
+	
 	if err := view.Register(
 		// Register a few default views.
 		ochttp.ClientSentBytesDistribution,
@@ -45,11 +45,11 @@ func ExampleTransport() {
 	); err != nil {
 		log.Fatal(err)
 	}
-
+	
 	client := &http.Client{
 		Transport: &ochttp.Transport{},
 	}
-
+	
 	// Use client to perform requests.
 	_ = client
 }
@@ -57,17 +57,17 @@ func ExampleTransport() {
 var usersHandler http.Handler
 
 func ExampleHandler() {
-	// import "go.opencensus.io/plugin/ochttp"
-
+	// import "github.com/gozelle/opencensus-go/plugin/ochttp"
+	
 	http.Handle("/users", ochttp.WithRouteTag(usersHandler, "/users"))
-
+	
 	// If no handler is specified, the default mux is used.
 	log.Fatal(http.ListenAndServe("localhost:8080", &ochttp.Handler{}))
 }
 
 func ExampleHandler_mux() {
-	// import "go.opencensus.io/plugin/ochttp"
-
+	// import "github.com/gozelle/opencensus-go/plugin/ochttp"
+	
 	mux := http.NewServeMux()
 	mux.Handle("/users", ochttp.WithRouteTag(usersHandler, "/users"))
 	log.Fatal(http.ListenAndServe("localhost:8080", &ochttp.Handler{

@@ -18,8 +18,8 @@ import (
 	"sort"
 	"sync"
 	"time"
-
-	"go.opencensus.io/metric/metricdata"
+	
+	"github.com/gozelle/opencensus-go/metric/metricdata"
 )
 
 // Registry creates and manages a set of gauges and cumulative.
@@ -244,7 +244,7 @@ func (r *Registry) initBaseMetric(bm *baseMetric, name string, mos ...Options) (
 	}
 	bm.start = time.Now()
 	o := createMetricOption(mos...)
-
+	
 	var constLabelKeys []metricdata.LabelKey
 	for k := range o.constLabels {
 		constLabelKeys = append(constLabelKeys, k)
@@ -252,15 +252,15 @@ func (r *Registry) initBaseMetric(bm *baseMetric, name string, mos ...Options) (
 	sort.Slice(constLabelKeys, func(i, j int) bool {
 		return constLabelKeys[i].Key < constLabelKeys[j].Key
 	})
-
+	
 	var constLabelValues []metricdata.LabelValue
 	for _, k := range constLabelKeys {
 		constLabelValues = append(constLabelValues, o.constLabels[k])
 	}
-
+	
 	bm.keys = append(constLabelKeys, o.labelkeys...)
 	bm.constLabelValues = constLabelValues
-
+	
 	bm.desc = metricdata.Descriptor{
 		Name:        name,
 		Description: o.desc,

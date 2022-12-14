@@ -18,8 +18,8 @@ package tag_test
 import (
 	"context"
 	"log"
-
-	"go.opencensus.io/tag"
+	
+	"github.com/gozelle/opencensus-go/tag"
 )
 
 var (
@@ -45,7 +45,7 @@ func ExampleMustNewKey() {
 func ExampleNew() {
 	osKey := tag.MustNewKey("example.com/keys/user-os")
 	userIDKey := tag.MustNewKey("example.com/keys/user-id")
-
+	
 	ctx, err := tag.New(ctx,
 		tag.Insert(osKey, "macOS-10.12.5"),
 		tag.Upsert(userIDKey, "cde36753ed"),
@@ -53,7 +53,7 @@ func ExampleNew() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
+	
 	_ = ctx // use context
 }
 
@@ -65,20 +65,20 @@ func ExampleNew_replace() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
+	
 	_ = ctx // use context
 }
 
 func ExampleNewContext() {
 	// Propagate the tag map in the current context.
 	ctx := tag.NewContext(context.Background(), tagMap)
-
+	
 	_ = ctx // use context
 }
 
 func ExampleFromContext() {
 	tagMap := tag.FromContext(ctx)
-
+	
 	_ = tagMap // use the tag map
 }
 

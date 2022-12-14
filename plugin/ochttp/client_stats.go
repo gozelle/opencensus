@@ -21,9 +21,9 @@ import (
 	"strconv"
 	"sync"
 	"time"
-
-	"go.opencensus.io/stats"
-	"go.opencensus.io/tag"
+	
+	"github.com/gozelle/opencensus-go/stats"
+	"github.com/gozelle/opencensus-go/tag"
 )
 
 // statsTransport is an http.RoundTripper that collects stats for the outgoing requests.
@@ -52,10 +52,10 @@ func (t statsTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 		track.reqSize = req.ContentLength
 	}
 	stats.Record(ctx, ClientRequestCount.M(1))
-
+	
 	// Perform request.
 	resp, err := t.base.RoundTrip(req)
-
+	
 	if err != nil {
 		track.statusCode = http.StatusInternalServerError
 		track.end()
@@ -114,7 +114,7 @@ func (t *tracker) end() {
 		if t.reqSize >= 0 {
 			m = append(m, ClientRequestBytes.M(t.reqSize))
 		}
-
+		
 		stats.RecordWithTags(t.ctx, []tag.Mutator{
 			tag.Upsert(StatusCode, strconv.Itoa(t.statusCode)),
 			tag.Upsert(KeyClientStatus, strconv.Itoa(t.statusCode)),

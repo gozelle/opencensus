@@ -22,9 +22,9 @@ import (
 	"log"
 	"strconv"
 	"time"
-
-	"go.opencensus.io/trace"
-	"go.opencensus.io/zpages/internal"
+	
+	"github.com/gozelle/opencensus-go/trace"
+	"github.com/gozelle/opencensus-go/zpages/internal"
 )
 
 var (
@@ -63,7 +63,7 @@ func countFormatter(num uint64) string {
 	}
 	var floatVal float64
 	var suffix string
-
+	
 	if num >= 1e18 {
 		floatVal = float64(num) / 1e18
 		suffix = " E "
@@ -80,7 +80,7 @@ func countFormatter(num uint64) string {
 		floatVal = float64(num) / 1e6
 		suffix = " M "
 	}
-
+	
 	if floatVal != 0 {
 		return fmt.Sprintf("%1.3f%s", floatVal, suffix)
 	}

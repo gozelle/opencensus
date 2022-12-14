@@ -15,7 +15,7 @@
 
 // Package tagencoding contains the tag encoding
 // used interally by the stats collector.
-package tagencoding // import "go.opencensus.io/internal/tagencoding"
+package tagencoding // import "github.com/gozelle/opencensus-go/internal/tagencoding"
 
 // Values represent the encoded buffer for the values.
 type Values struct {
@@ -36,16 +36,16 @@ func (vb *Values) growIfRequired(expected int) {
 func (vb *Values) WriteValue(v []byte) {
 	length := len(v) & 0xff
 	vb.growIfRequired(1 + length)
-
+	
 	// writing length of v
 	vb.Buffer[vb.WriteIndex] = byte(length)
 	vb.WriteIndex++
-
+	
 	if length == 0 {
 		// No value was encoded for this key
 		return
 	}
-
+	
 	// writing v
 	copy(vb.Buffer[vb.WriteIndex:], v[:length])
 	vb.WriteIndex += length
@@ -60,7 +60,7 @@ func (vb *Values) ReadValue() []byte {
 		// No value was encoded for this key
 		return nil
 	}
-
+	
 	// read value of v
 	v := make([]byte, length)
 	endIdx := vb.ReadIndex + length

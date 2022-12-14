@@ -18,11 +18,11 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
-
+	
 	"github.com/google/go-cmp/cmp"
-	"go.opencensus.io/plugin/ochttp"
-	"go.opencensus.io/stats/view"
-	"go.opencensus.io/tag"
+	"github.com/gozelle/opencensus-go/plugin/ochttp"
+	"github.com/gozelle/opencensus-go/stats/view"
+	"github.com/gozelle/opencensus-go/tag"
 )
 
 func TestWithRouteTag(t *testing.T) {
@@ -36,7 +36,7 @@ func TestWithRouteTag(t *testing.T) {
 	var e testStatsExporter
 	view.RegisterExporter(&e)
 	defer view.UnregisterExporter(&e)
-
+	
 	mux := http.NewServeMux()
 	handler := ochttp.WithRouteTag(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(204)
@@ -49,9 +49,9 @@ func TestWithRouteTag(t *testing.T) {
 	if got, want := rr.Code, 204; got != want {
 		t.Fatalf("Unexpected response, got %d; want %d", got, want)
 	}
-
+	
 	view.Unregister(v) // trigger exporting
-
+	
 	got := e.rowsForView("request_total")
 	for i := range got {
 		view.ClearStart(got[i].Data)
@@ -75,7 +75,7 @@ func TestSetRoute(t *testing.T) {
 	var e testStatsExporter
 	view.RegisterExporter(&e)
 	defer view.UnregisterExporter(&e)
-
+	
 	mux := http.NewServeMux()
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ochttp.SetRoute(r.Context(), "/a/")
@@ -89,9 +89,9 @@ func TestSetRoute(t *testing.T) {
 	if got, want := rr.Code, 204; got != want {
 		t.Fatalf("Unexpected response, got %d; want %d", got, want)
 	}
-
+	
 	view.Unregister(v) // trigger exporting
-
+	
 	got := e.rowsForView("request_total")
 	for i := range got {
 		view.ClearStart(got[i].Data)

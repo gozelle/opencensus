@@ -15,9 +15,9 @@
 package ochttp
 
 import (
-	"go.opencensus.io/stats"
-	"go.opencensus.io/stats/view"
-	"go.opencensus.io/tag"
+	"github.com/gozelle/opencensus-go/stats"
+	"github.com/gozelle/opencensus-go/stats/view"
+	"github.com/gozelle/opencensus-go/tag"
 )
 
 // Deprecated: client HTTP measures.
@@ -93,21 +93,21 @@ var (
 	// to watch out for potentially generating high-cardinality labels in your
 	// metrics backend if you use this tag in views.
 	Host = tag.MustNewKey("http.host")
-
+	
 	// StatusCode is the numeric HTTP response status code,
 	// or "error" if a transport error occurred and no status code was read.
 	StatusCode = tag.MustNewKey("http.status")
-
+	
 	// Path is the URL path (not including query string) in the request.
 	//
 	// The value of this tag can be controlled by the HTTP client, so you need
 	// to watch out for potentially generating high-cardinality labels in your
 	// metrics backend if you use this tag in views.
 	Path = tag.MustNewKey("http.path")
-
+	
 	// Method is the HTTP method of the request, capitalized (GET, POST, etc.).
 	Method = tag.MustNewKey("http.method")
-
+	
 	// KeyServerRoute is a low cardinality string representing the logical
 	// handler of the request. This is usually the pattern registered on the a
 	// ServeMux (or similar string).
@@ -142,7 +142,7 @@ var (
 		Description: "Total bytes sent in request body (not including headers), by HTTP method and response status",
 		TagKeys:     []tag.Key{KeyClientMethod, KeyClientStatus},
 	}
-
+	
 	ClientReceivedBytesDistribution = &view.View{
 		Name:        "opencensus.io/http/client/received_bytes",
 		Measure:     ClientReceivedBytes,
@@ -150,7 +150,7 @@ var (
 		Description: "Total bytes received in response bodies (not including headers but including error responses with bodies), by HTTP method and response status",
 		TagKeys:     []tag.Key{KeyClientMethod, KeyClientStatus},
 	}
-
+	
 	ClientRoundtripLatencyDistribution = &view.View{
 		Name:        "opencensus.io/http/client/roundtrip_latency",
 		Measure:     ClientRoundtripLatency,
@@ -158,7 +158,7 @@ var (
 		Description: "End-to-end latency, by HTTP method and response status",
 		TagKeys:     []tag.Key{KeyClientMethod, KeyClientStatus},
 	}
-
+	
 	ClientCompletedCount = &view.View{
 		Name:        "opencensus.io/http/client/completed_count",
 		Measure:     ClientRoundtripLatency,
@@ -177,7 +177,7 @@ var (
 		Measure:     ClientRequestCount,
 		Aggregation: view.Count(),
 	}
-
+	
 	// Deprecated: Use ClientSentBytesDistribution.
 	ClientRequestBytesView = &view.View{
 		Name:        "opencensus.io/http/client/request_bytes",
@@ -185,7 +185,7 @@ var (
 		Measure:     ClientSentBytes,
 		Aggregation: DefaultSizeDistribution,
 	}
-
+	
 	// Deprecated: Use ClientReceivedBytesDistribution instead.
 	ClientResponseBytesView = &view.View{
 		Name:        "opencensus.io/http/client/response_bytes",
@@ -193,7 +193,7 @@ var (
 		Measure:     ClientReceivedBytes,
 		Aggregation: DefaultSizeDistribution,
 	}
-
+	
 	// Deprecated: Use ClientRoundtripLatencyDistribution instead.
 	ClientLatencyView = &view.View{
 		Name:        "opencensus.io/http/client/latency",
@@ -201,7 +201,7 @@ var (
 		Measure:     ClientRoundtripLatency,
 		Aggregation: DefaultLatencyDistribution,
 	}
-
+	
 	// Deprecated: Use ClientCompletedCount instead.
 	ClientRequestCountByMethod = &view.View{
 		Name:        "opencensus.io/http/client/request_count_by_method",
@@ -210,7 +210,7 @@ var (
 		Measure:     ClientSentBytes,
 		Aggregation: view.Count(),
 	}
-
+	
 	// Deprecated: Use ClientCompletedCount instead.
 	ClientResponseCountByStatusCode = &view.View{
 		Name:        "opencensus.io/http/client/response_count_by_status_code",
@@ -230,28 +230,28 @@ var (
 		Measure:     ServerRequestCount,
 		Aggregation: view.Count(),
 	}
-
+	
 	ServerRequestBytesView = &view.View{
 		Name:        "opencensus.io/http/server/request_bytes",
 		Description: "Size distribution of HTTP request body",
 		Measure:     ServerRequestBytes,
 		Aggregation: DefaultSizeDistribution,
 	}
-
+	
 	ServerResponseBytesView = &view.View{
 		Name:        "opencensus.io/http/server/response_bytes",
 		Description: "Size distribution of HTTP response body",
 		Measure:     ServerResponseBytes,
 		Aggregation: DefaultSizeDistribution,
 	}
-
+	
 	ServerLatencyView = &view.View{
 		Name:        "opencensus.io/http/server/latency",
 		Description: "Latency distribution of HTTP requests",
 		Measure:     ServerLatency,
 		Aggregation: DefaultLatencyDistribution,
 	}
-
+	
 	ServerRequestCountByMethod = &view.View{
 		Name:        "opencensus.io/http/server/request_count_by_method",
 		Description: "Server request count by HTTP method",
@@ -259,7 +259,7 @@ var (
 		Measure:     ServerRequestCount,
 		Aggregation: view.Count(),
 	}
-
+	
 	ServerResponseCountByStatusCode = &view.View{
 		Name:        "opencensus.io/http/server/response_count_by_status_code",
 		Description: "Server response count by status code",

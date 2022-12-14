@@ -19,11 +19,11 @@ import (
 	"log"
 	"os"
 	"time"
-
-	"go.opencensus.io/examples/exporter"
-	pb "go.opencensus.io/examples/grpc/proto"
-	"go.opencensus.io/plugin/ocgrpc"
-	"go.opencensus.io/stats/view"
+	
+	"github.com/gozelle/opencensus-go/examples/exporter"
+	pb "github.com/gozelle/opencensus-go/examples/grpc/proto"
+	"github.com/gozelle/opencensus-go/plugin/ocgrpc"
+	"github.com/gozelle/opencensus-go/stats/view"
 	"google.golang.org/grpc"
 )
 
@@ -36,12 +36,12 @@ func main() {
 	// Register stats and trace exporters to export
 	// the collected data.
 	view.RegisterExporter(&exporter.PrintExporter{})
-
+	
 	// Register the view to collect gRPC client stats.
 	if err := view.Register(ocgrpc.DefaultClientViews...); err != nil {
 		log.Fatal(err)
 	}
-
+	
 	// Set up a connection to the server with the OpenCensus
 	// stats handler to enable stats and tracing.
 	conn, err := grpc.Dial(address, grpc.WithStatsHandler(&ocgrpc.ClientHandler{}), grpc.WithInsecure())
@@ -50,7 +50,7 @@ func main() {
 	}
 	defer conn.Close()
 	c := pb.NewGreeterClient(conn)
-
+	
 	// Contact the server and print out its response.
 	name := defaultName
 	if len(os.Args) > 1 {

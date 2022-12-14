@@ -12,16 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package exporter // import "go.opencensus.io/examples/exporter"
+package exporter // import "github.com/gozelle/opencensus-go/examples/exporter"
 
 import (
 	"encoding/hex"
 	"fmt"
 	"regexp"
 	"time"
-
-	"go.opencensus.io/stats/view"
-	"go.opencensus.io/trace"
+	
+	"github.com/gozelle/opencensus-go/stats/view"
+	"github.com/gozelle/opencensus-go/trace"
 )
 
 // indent these many spaces
@@ -43,7 +43,7 @@ type PrintExporter struct{}
 func (e *PrintExporter) ExportView(vd *view.Data) {
 	for _, row := range vd.Rows {
 		fmt.Printf("%v %-45s", vd.End.Format("15:04:05"), vd.View.Name)
-
+		
 		switch v := row.Data.(type) {
 		case *view.DistributionData:
 			fmt.Printf("distribution: min=%.1f max=%.1f mean=%.1f", v.Min, v.Max, v.Mean)
@@ -55,7 +55,7 @@ func (e *PrintExporter) ExportView(vd *view.Data) {
 			fmt.Printf("last:         value=%v", v.Value)
 		}
 		fmt.Println()
-
+		
 		for _, tag := range row.Tags {
 			fmt.Printf("%v- %v=%v\n", indent, tag.Key.Name(), tag.Value)
 		}
@@ -77,12 +77,12 @@ func (e *PrintExporter) ExportSpan(vd *trace.SpanData) {
 	if !reZero.MatchString(parentSpanID) {
 		fmt.Println("ParentSpanID:", parentSpanID)
 	}
-
+	
 	fmt.Println()
 	fmt.Printf("Span:    %v\n", vd.Name)
 	fmt.Printf("Status:  %v [%v]\n", vd.Status.Message, vd.Status.Code)
 	fmt.Printf("Elapsed: %v\n", vd.EndTime.Sub(vd.StartTime).Round(time.Millisecond))
-
+	
 	if len(vd.Annotations) > 0 {
 		fmt.Println()
 		fmt.Println("Annotations:")
@@ -94,7 +94,7 @@ func (e *PrintExporter) ExportSpan(vd *trace.SpanData) {
 			fmt.Println()
 		}
 	}
-
+	
 	if len(vd.Attributes) > 0 {
 		fmt.Println()
 		fmt.Println("Attributes:")

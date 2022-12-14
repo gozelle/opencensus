@@ -13,14 +13,14 @@
 // limitations under the License.
 
 // Package readme generates the README.
-package readme // import "go.opencensus.io/internal/readme"
+package readme // import "github.com/gozelle/opencensus-go/internal/readme"
 
 import (
 	"context"
 	"log"
-
-	"go.opencensus.io/stats"
-	"go.opencensus.io/stats/view"
+	
+	"github.com/gozelle/opencensus-go/stats"
+	"github.com/gozelle/opencensus-go/stats/view"
 )
 
 // README.md is generated with the examples here by using embedmd.
@@ -28,17 +28,17 @@ import (
 
 func statsExamples() {
 	ctx := context.Background()
-
+	
 	videoSize := stats.Int64("example.com/video_size", "processed video size", "MB")
-
+	
 	// START aggs
 	distAgg := view.Distribution(1<<32, 2<<32, 3<<32)
 	countAgg := view.Count()
 	sumAgg := view.Sum()
 	// END aggs
-
+	
 	_, _, _ = distAgg, countAgg, sumAgg
-
+	
 	// START view
 	if err := view.Register(&view.View{
 		Name:        "example.com/video_size_distribution",
@@ -49,7 +49,7 @@ func statsExamples() {
 		log.Fatalf("Failed to register view: %v", err)
 	}
 	// END view
-
+	
 	// START record
 	stats.Record(ctx, videoSize.M(102478))
 	// END record

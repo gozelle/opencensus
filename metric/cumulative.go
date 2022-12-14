@@ -18,8 +18,8 @@ import (
 	"math"
 	"sync/atomic"
 	"time"
-
-	"go.opencensus.io/metric/metricdata"
+	
+	"github.com/gozelle/opencensus-go/metric/metricdata"
 )
 
 // Float64Cumulative represents a float64 value that can only go up.

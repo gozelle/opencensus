@@ -16,18 +16,18 @@ package stats_test
 
 import (
 	"context"
-
-	"go.opencensus.io/stats"
+	
+	"github.com/gozelle/opencensus-go/stats"
 )
 
 func ExampleRecord() {
 	ctx := context.Background()
-
+	
 	// Measures are usually declared as package-private global variables.
 	openConns := stats.Int64("example.com/measure/openconns", "open connections", stats.UnitDimensionless)
-
+	
 	// Instrumented packages call stats.Record() to record measuremens.
 	stats.Record(ctx, openConns.M(124)) // Record 124 open connections.
-
+	
 	// Without any views or exporters registered, this statement has no observable effects.
 }

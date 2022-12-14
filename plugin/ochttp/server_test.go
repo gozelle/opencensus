@@ -15,11 +15,11 @@ import (
 	"sync"
 	"testing"
 	"time"
-
+	
 	"golang.org/x/net/http2"
-
-	"go.opencensus.io/stats/view"
-	"go.opencensus.io/trace"
+	
+	"github.com/gozelle/opencensus-go/stats/view"
+	"github.com/gozelle/opencensus-go/trace"
 )
 
 func httpHandler(statusCode, respSize int) http.Handler {
@@ -41,14 +41,14 @@ func TestHandlerStatsCollection(t *testing.T) {
 	if err := view.Register(DefaultServerViews...); err != nil {
 		t.Fatalf("Failed to register ochttp.DefaultServerViews error: %v", err)
 	}
-
+	
 	views := []string{
 		"opencensus.io/http/server/request_count",
 		"opencensus.io/http/server/latency",
 		"opencensus.io/http/server/request_bytes",
 		"opencensus.io/http/server/response_bytes",
 	}
-
+	
 	// TODO: test latency measurements?
 	tests := []struct {
 		name, method, target                 string
@@ -59,7 +59,7 @@ func TestHandlerStatsCollection(t *testing.T) {
 		{"no body 302", "GET", "http://opencensus.io/request/three", 2, 302, 0, 0},
 	}
 	totalCount, meanReqSize, meanRespSize := 0, 0.0, 0.0
-
+	
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			body := bytes.NewBuffer(make([]byte, test.reqSize))
@@ -83,7 +83,7 @@ func TestHandlerStatsCollection(t *testing.T) {
 			}
 		})
 	}
-
+	
 	for _, viewName := range views {
 		v := view.Find(viewName)
 		if v == nil {
@@ -100,7 +100,7 @@ func TestHandlerStatsCollection(t *testing.T) {
 			continue
 		}
 		data := rows[0].Data
-
+		
 		var count int
 		var sum float64
 		switch data := data.(type) {
@@ -113,11 +113,11 @@ func TestHandlerStatsCollection(t *testing.T) {
 			t.Errorf("Unknown data type: %v", data)
 			continue
 		}
-
+		
 		if got, want := count, totalCount; got != want {
 			t.Fatalf("%s = %d; want %d", viewName, got, want)
 		}
-
+		
 		// We can only check sum for distribution views.
 		switch viewName {
 		case "opencensus.io/http/server/request_bytes":
@@ -149,7 +149,7 @@ func TestUnitTestHandlerProxiesHijack(t *testing.T) {
 		{nil, false},
 		{new(testResponseWriterHijacker), true},
 	}
-
+	
 	for i, tt := range tests {
 		tw := &trackingResponseWriter{writer: tt.w}
 		w := tw.wrappedResponseWriter()
@@ -180,7 +180,7 @@ func TestHandlerProxiesHijack_HTTP1(t *testing.T) {
 		}),
 	})
 	defer cst.Close()
-
+	
 	testCases := []struct {
 		name string
 		tr   *http.Transport
@@ -201,7 +201,7 @@ func TestHandlerProxiesHijack_HTTP1(t *testing.T) {
 			want: "Proto=HTTP/1.1\npanic=false",
 		},
 	}
-
+	
 	for _, tc := range testCases {
 		c := &http.Client{Transport: &Transport{Base: tc.tr}}
 		res, err := c.Get(cst.URL)
@@ -233,7 +233,7 @@ func TestHandlerProxiesHijack_HTTP2(t *testing.T) {
 					conn.Close()
 					return
 				}
-
+				
 				switch {
 				case err == nil:
 					fmt.Fprintf(w, "Unexpectedly did not encounter an error!")
@@ -258,11 +258,11 @@ func TestHandlerProxiesHijack_HTTP2(t *testing.T) {
 	cst.TLS = &tls.Config{NextProtos: []string{"h2"}}
 	cst.StartTLS()
 	defer cst.Close()
-
+	
 	if wantPrefix := "https://"; !strings.HasPrefix(cst.URL, wantPrefix) {
 		t.Fatalf("URL got = %q wantPrefix = %q", cst.URL, wantPrefix)
 	}
-
+	
 	tr := &http.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify: true}}
 	http2.ConfigureTransport(tr)
 	c := &http.Client{Transport: tr}
@@ -285,7 +285,7 @@ func TestEnsureTrackingResponseWriterSetsStatusCode(t *testing.T) {
 	exporter := &spanExporter{cur: make(chan *trace.SpanData, 1)}
 	trace.RegisterExporter(exporter)
 	defer trace.UnregisterExporter(exporter)
-
+	
 	tests := []struct {
 		res  *http.Response
 		want trace.Status
@@ -296,7 +296,7 @@ func TestEnsureTrackingResponseWriterSetsStatusCode(t *testing.T) {
 		{res: &http.Response{StatusCode: 401}, want: trace.Status{Code: trace.StatusCodeUnauthenticated, Message: `UNAUTHENTICATED`}},
 		{res: &http.Response{StatusCode: 429}, want: trace.Status{Code: trace.StatusCodeResourceExhausted, Message: `RESOURCE_EXHAUSTED`}},
 	}
-
+	
 	for _, tt := range tests {
 		t.Run(tt.want.Message, func(t *testing.T) {
 			ctx := context.Background()
@@ -325,7 +325,7 @@ func TestEnsureTrackingResponseWriterSetsStatusCode(t *testing.T) {
 			}
 			_, _ = ioutil.ReadAll(res.Body)
 			res.Body.Close()
-
+			
 			cur := <-exporter.cur
 			if got, want := cur.Status, tt.want; got != want {
 				t.Fatalf("SpanData:\ngot =  (%#v)\nwant = (%#v)", got, want)
@@ -378,7 +378,7 @@ func TestHandlerImplementsHTTPPusher(t *testing.T) {
 		w.Write([]byte("true"))
 	}), asHTTP2)
 	defer cst.Close()
-
+	
 	tests := []struct {
 		rt       http.RoundTripper
 		wantBody string
@@ -400,7 +400,7 @@ func TestHandlerImplementsHTTPPusher(t *testing.T) {
 			wantBody: "true",
 		},
 	}
-
+	
 	for i, tt := range tests {
 		c := &http.Client{Transport: &Transport{Base: tt.rt}}
 		res, err := c.Get(cst.URL)
@@ -421,7 +421,7 @@ const (
 	hang        = "hang"
 	ended       = "ended"
 	nonNotifier = "nonNotifier"
-
+	
 	asHTTP1 = false
 	asHTTP2 = true
 )
@@ -437,7 +437,7 @@ func setupAndStartServer(hf func(http.ResponseWriter, *http.Request), isHTTP2 bo
 	} else {
 		cst.Start()
 	}
-
+	
 	return cst
 }
 
@@ -457,14 +457,14 @@ type concurrentBuffer struct {
 func (cw *concurrentBuffer) Write(b []byte) (int, error) {
 	cw.Lock()
 	defer cw.Unlock()
-
+	
 	return cw.bw.Write(b)
 }
 
 func (cw *concurrentBuffer) String() string {
 	cw.Lock()
 	defer cw.Unlock()
-
+	
 	return cw.bw.String()
 }
 
@@ -480,7 +480,7 @@ func handleCloseNotify(outLog io.Writer) http.HandlerFunc {
 			fmt.Fprintln(outLog, isNil)
 			return
 		}
-
+		
 		<-ch
 		fmt.Fprintln(outLog, ended)
 	})
@@ -491,10 +491,10 @@ func TestHandlerImplementsHTTPCloseNotify(t *testing.T) {
 	http1Server := setupAndStartServer(handleCloseNotify(http1Log), asHTTP1)
 	http2Log := &concurrentBuffer{bw: new(bytes.Buffer)}
 	http2Server := setupAndStartServer(handleCloseNotify(http2Log), asHTTP2)
-
+	
 	defer http1Server.Close()
 	defer http2Server.Close()
-
+	
 	tests := []struct {
 		url  string
 		want string
@@ -502,7 +502,7 @@ func TestHandlerImplementsHTTPCloseNotify(t *testing.T) {
 		{url: http1Server.URL, want: nonNotifier},
 		{url: http2Server.URL, want: ended},
 	}
-
+	
 	transports := []struct {
 		name string
 		rt   http.RoundTripper
@@ -512,7 +512,7 @@ func TestHandlerImplementsHTTPCloseNotify(t *testing.T) {
 		{name: "http1-ochttp", rt: h1Transport()},
 		{name: "http2-ochttp", rt: h2Transport()},
 	}
-
+	
 	// Each transport invokes one of two server types, either HTTP/1 or HTTP/2
 	for _, trc := range transports {
 		// Try out all the transport combinations
@@ -522,13 +522,13 @@ func TestHandlerImplementsHTTPCloseNotify(t *testing.T) {
 				t.Errorf("#%d: Unexpected error making request: %v", i, err)
 				continue
 			}
-
+			
 			// Using a timeout to ensure that the request is cancelled and the server
 			// if its handler implements CloseNotify will see this as the client leaving.
 			ctx, cancel := context.WithTimeout(context.Background(), 80*time.Millisecond)
 			defer cancel()
 			req = req.WithContext(ctx)
-
+			
 			client := &http.Client{Transport: trc.rt}
 			res, err := client.Do(req)
 			if err != nil && !strings.Contains(err.Error(), "context deadline exceeded") {
@@ -541,10 +541,10 @@ func TestHandlerImplementsHTTPCloseNotify(t *testing.T) {
 			}
 		}
 	}
-
+	
 	// Wait for a couple of milliseconds for the GoAway frames to be properly propagated
 	<-time.After(200 * time.Millisecond)
-
+	
 	wantHTTP1Log := strings.Repeat("ended\n", len(transports))
 	wantHTTP2Log := strings.Repeat("ended\n", len(transports))
 	if g, w := http1Log.String(), wantHTTP1Log; g != w {
@@ -566,7 +566,7 @@ func testHealthEndpointSkipArray(r *http.Request) bool {
 
 func TestIgnoreHealthEndpoints(t *testing.T) {
 	var spans int
-
+	
 	client := &http.Client{}
 	tests := []struct {
 		path               string
@@ -595,7 +595,7 @@ func TestIgnoreHealthEndpoints(t *testing.T) {
 				IsHealthEndpoint: tt.healthEndpointFunc,
 			})
 			defer ts.Close()
-
+			
 			resp, err := client.Get(ts.URL + tt.path)
 			if err != nil {
 				t.Fatalf("Cannot GET %q: %v", tt.path, err)
@@ -604,14 +604,14 @@ func TestIgnoreHealthEndpoints(t *testing.T) {
 			if err != nil {
 				t.Fatalf("Cannot read body for %q: %v", tt.path, err)
 			}
-
+			
 			if got, want := string(b), "ok"; got != want {
 				t.Fatalf("Body for %q = %q; want %q", tt.path, got, want)
 			}
 			resp.Body.Close()
 		})
 	}
-
+	
 	if spans > 0 {
 		t.Errorf("Got %v spans; want no spans", spans)
 	}

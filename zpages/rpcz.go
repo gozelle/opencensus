@@ -25,9 +25,9 @@ import (
 	"sync"
 	"text/tabwriter"
 	"time"
-
-	"go.opencensus.io/plugin/ocgrpc"
-	"go.opencensus.io/stats/view"
+	
+	"github.com/gozelle/opencensus-go/plugin/ocgrpc"
+	"github.com/gozelle/opencensus-go/stats/view"
 )
 
 const bytesPerKb = 1024
@@ -36,7 +36,7 @@ var (
 	programStartTime = time.Now()
 	mu               sync.Mutex // protects snaps
 	snaps            = make(map[methodKey]*statSnapshot)
-
+	
 	// viewType lists the views we are interested in for RPC stats.
 	// A view's map value indicates whether that view contains data for received
 	// RPCs.
@@ -99,7 +99,7 @@ func WriteTextRpczPage(w io.Writer) {
 	mu.Lock()
 	defer mu.Unlock()
 	page := getStatsPage()
-
+	
 	for i, sg := range page.StatGroups {
 		switch i {
 		case 0:
@@ -206,7 +206,7 @@ func (s snapExporter) ExportView(vd *view.Data) {
 		return
 	}
 	ageSec := float64(time.Since(programStartTime)) / float64(time.Second)
-
+	
 	computeRate := func(maxSec, x float64) float64 {
 		dur := ageSec
 		if maxSec > 0 && dur > maxSec {
@@ -214,16 +214,16 @@ func (s snapExporter) ExportView(vd *view.Data) {
 		}
 		return x / dur
 	}
-
+	
 	convertTime := func(ms float64) time.Duration {
 		if math.IsInf(ms, 0) || math.IsNaN(ms) {
 			return 0
 		}
 		return time.Duration(float64(time.Millisecond) * ms)
 	}
-
+	
 	haveResetErrors := make(map[string]struct{})
-
+	
 	mu.Lock()
 	defer mu.Unlock()
 	for _, row := range vd.Rows {
@@ -234,14 +234,14 @@ func (s snapExporter) ExportView(vd *view.Data) {
 				break
 			}
 		}
-
+		
 		key := methodKey{method: method, received: received}
 		s := snaps[key]
 		if s == nil {
 			s = &statSnapshot{Method: method, Received: received}
 			snaps[key] = s
 		}
-
+		
 		var (
 			sum   float64
 			count float64
@@ -257,7 +257,7 @@ func (s snapExporter) ExportView(vd *view.Data) {
 			sum = v.Value
 			count = v.Value
 		}
-
+		
 		// Update field of s corresponding to the view.
 		switch vd.View {
 		case ocgrpc.ClientCompletedRPCsView:
@@ -270,23 +270,23 @@ func (s snapExporter) ExportView(vd *view.Data) {
 					s.ErrorsTotal += uint64(count)
 				}
 			}
-
+		
 		case ocgrpc.ClientRoundtripLatencyView:
 			s.AvgLatencyTotal = convertTime(sum / count)
-
+		
 		case ocgrpc.ClientSentBytesPerRPCView:
 			s.OutputRateTotal = computeRate(0, sum)
-
+		
 		case ocgrpc.ClientReceivedBytesPerRPCView:
 			s.InputRateTotal = computeRate(0, sum)
-
+		
 		case ocgrpc.ClientSentMessagesPerRPCView:
 			s.CountTotal = uint64(count)
 			s.RPCRateTotal = computeRate(0, count)
-
+		
 		case ocgrpc.ClientReceivedMessagesPerRPCView:
 			// currently unused
-
+		
 		case ocgrpc.ServerCompletedRPCsView:
 			if _, ok := haveResetErrors[method]; !ok {
 				haveResetErrors[method] = struct{}{}
@@ -297,17 +297,17 @@ func (s snapExporter) ExportView(vd *view.Data) {
 					s.ErrorsTotal += uint64(count)
 				}
 			}
-
+		
 		case ocgrpc.ServerLatencyView:
 			s.AvgLatencyTotal = convertTime(sum / count)
-
+		
 		case ocgrpc.ServerSentBytesPerRPCView:
 			s.OutputRateTotal = computeRate(0, sum)
-
+		
 		case ocgrpc.ServerReceivedMessagesPerRPCView:
 			s.CountTotal = uint64(count)
 			s.RPCRateTotal = computeRate(0, count)
-
+		
 		case ocgrpc.ServerSentMessagesPerRPCView:
 			// currently unused
 		}
@@ -326,7 +326,7 @@ func getStatsPage() *statsPage {
 	}
 	sort.Sort(&sentStats)
 	sort.Sort(&receivedStats)
-
+	
 	return &statsPage{
 		StatGroups: []*statGroup{&sentStats, &receivedStats},
 	}

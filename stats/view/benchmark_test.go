@@ -20,9 +20,9 @@ import (
 	"fmt"
 	"testing"
 	"time"
-
-	"go.opencensus.io/stats"
-	"go.opencensus.io/tag"
+	
+	"github.com/gozelle/opencensus-go/stats"
+	"github.com/gozelle/opencensus-go/tag"
 )
 
 var (
@@ -35,7 +35,7 @@ var (
 	k6 = tag.MustNewKey("k6")
 	k7 = tag.MustNewKey("k7")
 	k8 = tag.MustNewKey("k8")
-
+	
 	view = &View{
 		Measure:     m,
 		Aggregation: Distribution(1, 2, 3, 4, 5, 6, 7, 8, 9, 10),
@@ -47,18 +47,18 @@ var (
 // directly.
 func BenchmarkRecordReqCommand(b *testing.B) {
 	w := NewMeter().(*worker)
-
+	
 	register := &registerViewReq{views: []*View{view}, err: make(chan error, 1)}
 	register.handleCommand(w)
 	if err := <-register.err; err != nil {
 		b.Fatal(err)
 	}
-
+	
 	ctxs := prepareContexts(10)
-
+	
 	b.ReportAllocs()
 	b.ResetTimer()
-
+	
 	for i := 0; i < b.N; i++ {
 		record := &recordReq{
 			ms: []stats.Measurement{
@@ -79,22 +79,22 @@ func BenchmarkRecordReqCommand(b *testing.B) {
 }
 
 func BenchmarkRecordViaStats(b *testing.B) {
-
+	
 	meter := NewMeter()
 	meter.Start()
 	defer meter.Stop()
 	meter.Register(view)
 	defer meter.Unregister(view)
-
+	
 	ctxs := prepareContexts(10)
 	rec := stats.WithRecorder(meter)
 	b.ReportAllocs()
 	b.ResetTimer()
-
+	
 	for i := 0; i < b.N; i++ {
 		stats.RecordWithOptions(ctxs[i%len(ctxs)], rec, stats.WithMeasurements(m.M(1), m.M(1), m.M(1), m.M(1), m.M(1), m.M(1), m.M(1), m.M(1)))
 	}
-
+	
 }
 
 func prepareContexts(tagCount int) []context.Context {

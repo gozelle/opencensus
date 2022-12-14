@@ -20,10 +20,10 @@ import (
 	"fmt"
 	"sync"
 	"time"
-
-	"go.opencensus.io/metric/metricdata"
-	"go.opencensus.io/metric/metricproducer"
-	"go.opencensus.io/trace"
+	
+	"github.com/gozelle/opencensus-go/metric/metricdata"
+	"github.com/gozelle/opencensus-go/metric/metricproducer"
+	"github.com/gozelle/opencensus-go/trace"
 )
 
 var (
@@ -52,7 +52,7 @@ type ReaderOptions struct {
 // exporter.
 type Reader struct {
 	sampler trace.Sampler
-
+	
 	spanName string
 }
 
@@ -64,7 +64,7 @@ type IntervalReader struct {
 	// metrics reporting. defaultReportingDuration  is used if it is not set.
 	// It cannot be set lower than minimumReportingDuration.
 	ReportingInterval time.Duration
-
+	
 	exporter   Exporter
 	timer      *time.Ticker
 	quit, done chan bool
@@ -104,7 +104,7 @@ func NewIntervalReader(reader *Reader, exporter Exporter) (*IntervalReader, erro
 	if reader == nil {
 		return nil, errReaderNil
 	}
-
+	
 	r := &IntervalReader{
 		exporter: exporter,
 		reader:   reader,
@@ -129,14 +129,14 @@ func (ir *IntervalReader) Start() error {
 		}
 		reportingInterval = ir.ReportingInterval
 	}
-
+	
 	if ir.quit != nil {
 		return errAlreadyStarted
 	}
 	ir.timer = time.NewTicker(reportingInterval)
 	ir.quit = make(chan bool)
 	ir.done = make(chan bool)
-
+	
 	go ir.startInternal()
 	return nil
 }
@@ -176,12 +176,12 @@ func (ir *IntervalReader) Stop() {
 func (ir *IntervalReader) Flush() {
 	ir.mu.Lock()
 	defer ir.mu.Unlock()
-
+	
 	// No-op if IntervalReader is not stopped
 	if ir.quit != nil {
 		return
 	}
-
+	
 	ir.reader.ReadAndExport(ir.exporter)
 }
 

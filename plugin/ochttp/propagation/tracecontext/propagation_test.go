@@ -20,9 +20,9 @@ import (
 	"reflect"
 	"strings"
 	"testing"
-
-	"go.opencensus.io/trace"
-	"go.opencensus.io/trace/tracestate"
+	
+	"github.com/gozelle/opencensus-go/trace"
+	"github.com/gozelle/opencensus-go/trace/tracestate"
 )
 
 var (
@@ -86,13 +86,13 @@ func TestHTTPFormat_FromRequest(t *testing.T) {
 			wantOk: false,
 		},
 	}
-
+	
 	f := &HTTPFormat{}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			req, _ := http.NewRequest("GET", "http://example.com", nil)
 			req.Header.Set("traceparent", tt.header)
-
+			
 			gotSc, gotOk := f.SpanContextFromRequest(req)
 			if !reflect.DeepEqual(gotSc, tt.wantSc) {
 				t.Errorf("HTTPFormat.FromRequest() gotSc = %v, want %v", gotSc, tt.wantSc)
@@ -100,7 +100,7 @@ func TestHTTPFormat_FromRequest(t *testing.T) {
 			if gotOk != tt.wantOk {
 				t.Errorf("HTTPFormat.FromRequest() gotOk = %v, want %v", gotOk, tt.wantOk)
 			}
-
+			
 			gotSc, gotOk = f.SpanContextFromHeaders(tt.header, "")
 			if !reflect.DeepEqual(gotSc, tt.wantSc) {
 				t.Errorf("HTTPFormat.SpanContextFromHeaders() gotTs = %v, want %v", gotSc.Tracestate, tt.wantSc.Tracestate)
@@ -131,12 +131,12 @@ func TestHTTPFormat_ToRequest(t *testing.T) {
 			f := &HTTPFormat{}
 			req, _ := http.NewRequest("GET", "http://example.com", nil)
 			f.SpanContextToRequest(tt.sc, req)
-
+			
 			h := req.Header.Get("traceparent")
 			if got, want := h, tt.wantHeader; got != want {
 				t.Errorf("HTTPFormat.ToRequest() header = %v, want %v", got, want)
 			}
-
+			
 			gotTp, _ := f.SpanContextToHeaders(tt.sc)
 			if gotTp != tt.wantHeader {
 				t.Errorf("HTTPFormat.SpanContextToHeaders() tracestate header = %v, want %v", gotTp, tt.wantHeader)
@@ -152,14 +152,14 @@ func TestHTTPFormatTracestate_FromRequest(t *testing.T) {
 		TraceOptions: traceOpt,
 		Tracestate:   nonDefaultTs,
 	}
-
+	
 	scWithDefaultTracestate := trace.SpanContext{
 		TraceID:      traceID,
 		SpanID:       spanID,
 		TraceOptions: traceOpt,
 		Tracestate:   defaultTs,
 	}
-
+	
 	tests := []struct {
 		name     string
 		tpHeader string
@@ -210,14 +210,14 @@ func TestHTTPFormatTracestate_FromRequest(t *testing.T) {
 			wantOk:   true,
 		},
 	}
-
+	
 	f := &HTTPFormat{}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			req, _ := http.NewRequest("GET", "http://example.com", nil)
 			req.Header.Set("traceparent", tt.tpHeader)
 			req.Header.Set("tracestate", tt.tsHeader)
-
+			
 			gotSc, gotOk := f.SpanContextFromRequest(req)
 			if !reflect.DeepEqual(gotSc, tt.wantSc) {
 				t.Errorf("HTTPFormat.FromRequest() gotTs = %v, want %v", gotSc.Tracestate, tt.wantSc.Tracestate)
@@ -225,7 +225,7 @@ func TestHTTPFormatTracestate_FromRequest(t *testing.T) {
 			if gotOk != tt.wantOk {
 				t.Errorf("HTTPFormat.FromRequest() gotOk = %v, want %v", gotOk, tt.wantOk)
 			}
-
+			
 			gotSc, gotOk = f.SpanContextFromHeaders(tt.tpHeader, tt.tsHeader)
 			if !reflect.DeepEqual(gotSc, tt.wantSc) {
 				t.Errorf("HTTPFormat.SpanContextFromHeaders() gotTs = %v, want %v", gotSc.Tracestate, tt.wantSc.Tracestate)
@@ -278,12 +278,12 @@ func TestHTTPFormatTracestate_ToRequest(t *testing.T) {
 			f := &HTTPFormat{}
 			req, _ := http.NewRequest("GET", "http://example.com", nil)
 			f.SpanContextToRequest(tt.sc, req)
-
+			
 			h := req.Header.Get("tracestate")
 			if got, want := h, tt.wantHeader; got != want {
 				t.Errorf("HTTPFormat.ToRequest() tracestate header = %v, want %v", got, want)
 			}
-
+			
 			_, gotTs := f.SpanContextToHeaders(tt.sc)
 			if gotTs != tt.wantHeader {
 				t.Errorf("HTTPFormat.SpanContextToHeaders() tracestate header = %v, want %v", gotTs, tt.wantHeader)

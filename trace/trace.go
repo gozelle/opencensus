@@ -23,9 +23,9 @@ import (
 	"sync"
 	"sync/atomic"
 	"time"
-
-	"go.opencensus.io/internal"
-	"go.opencensus.io/trace/tracestate"
+	
+	"github.com/gozelle/opencensus-go/internal"
+	"github.com/gozelle/opencensus-go/trace/tracestate"
 )
 
 type tracer struct{}
@@ -46,24 +46,24 @@ type span struct {
 	data        *SpanData
 	mu          sync.Mutex // protects the contents of *data (but not the pointer value.)
 	spanContext SpanContext
-
+	
 	// lruAttributes are capped at configured limit. When the capacity is reached an oldest entry
 	// is removed to create room for a new entry.
 	lruAttributes *lruMap
-
+	
 	// annotations are stored in FIFO queue capped by configured limit.
 	annotations *evictedQueue
-
+	
 	// messageEvents are stored in FIFO queue capped by configured limit.
 	messageEvents *evictedQueue
-
+	
 	// links are stored in FIFO queue capped by configured limit.
 	links *evictedQueue
-
+	
 	// spanStore is the spanStore this span belongs to, if any, otherwise it is nil.
 	*spanStore
 	endOnce sync.Once
-
+	
 	executionTracerTaskEnd func() // ends the execution tracer span
 }
 
@@ -141,7 +141,7 @@ type StartOptions struct {
 	// when there is a non-remote parent, no new sampling decision will be made:
 	// we will preserve the sampling of the parent.
 	Sampler Sampler
-
+	
 	// SpanKind represents the kind of a span. If none is set,
 	// SpanKindUnspecified is used.
 	SpanKind int
@@ -183,7 +183,7 @@ func (t *tracer) StartSpan(ctx context.Context, name string, o ...StartOption) (
 		op(&opts)
 	}
 	span := startSpanInternal(name, parent != SpanContext{}, parent, false, opts)
-
+	
 	ctx, end := startExecutionTracerTask(ctx, name)
 	span.executionTracerTaskEnd = end
 	extSpan := NewSpan(span)
@@ -212,19 +212,19 @@ func (t *tracer) StartSpanWithRemoteParent(ctx context.Context, name string, par
 func startSpanInternal(name string, hasParent bool, parent SpanContext, remoteParent bool, o StartOptions) *span {
 	s := &span{}
 	s.spanContext = parent
-
+	
 	cfg := config.Load().(*Config)
 	if gen, ok := cfg.IDGenerator.(*defaultIDGenerator); ok {
 		// lazy initialization
 		gen.init()
 	}
-
+	
 	if !hasParent {
 		s.spanContext.TraceID = cfg.IDGenerator.NewTraceID()
 	}
 	s.spanContext.SpanID = cfg.IDGenerator.NewSpanID()
 	sampler := cfg.DefaultSampler
-
+	
 	if !hasParent || remoteParent || o.Sampler != nil {
 		// If this span is the child of a local span and no Sampler is set in the
 		// options, keep the parent's TraceOptions.
@@ -241,11 +241,11 @@ func startSpanInternal(name string, hasParent bool, parent SpanContext, remotePa
 			Name:            name,
 			HasRemoteParent: remoteParent}).Sample)
 	}
-
+	
 	if !internal.LocalSpanStoreEnabled && !s.spanContext.IsSampled() {
 		return s
 	}
-
+	
 	s.data = &SpanData{
 		SpanContext:     s.spanContext,
 		StartTime:       time.Now(),
@@ -257,7 +257,7 @@ func startSpanInternal(name string, hasParent bool, parent SpanContext, remotePa
 	s.annotations = newEvictedQueue(cfg.MaxAnnotationEventsPerSpan)
 	s.messageEvents = newEvictedQueue(cfg.MaxMessageEventsPerSpan)
 	s.links = newEvictedQueue(cfg.MaxLinksPerSpan)
-
+	
 	if hasParent {
 		s.data.ParentSpanID = parent.SpanID
 	}
@@ -269,7 +269,7 @@ func startSpanInternal(name string, hasParent bool, parent SpanContext, remotePa
 			ss.add(s)
 		}
 	}
-
+	
 	return s
 }
 
@@ -536,7 +536,7 @@ func init() {
 
 type defaultIDGenerator struct {
 	sync.Mutex
-
+	
 	// Please keep these as the first fields
 	// so that these 8 byte fields will be aligned on addresses
 	// divisible by 8, on both 32-bit and 64-bit machines when
@@ -547,10 +547,10 @@ type defaultIDGenerator struct {
 	// * https://golang.org/pkg/sync/atomic/#pkg-note-BUG
 	nextSpanID uint64
 	spanIDInc  uint64
-
+	
 	traceIDAdd  [2]uint64
 	traceIDRand *rand.Rand
-
+	
 	initOnce sync.Once
 }
 

@@ -22,26 +22,26 @@ import (
 	"log"
 	"math/rand"
 	"time"
-
-	"go.opencensus.io/examples/exporter"
-	"go.opencensus.io/stats"
-	"go.opencensus.io/stats/view"
-	"go.opencensus.io/tag"
-	"go.opencensus.io/trace"
+	
+	"github.com/gozelle/opencensus-go/examples/exporter"
+	"github.com/gozelle/opencensus-go/stats"
+	"github.com/gozelle/opencensus-go/stats/view"
+	"github.com/gozelle/opencensus-go/tag"
+	"github.com/gozelle/opencensus-go/trace"
 )
 
 var (
 	// frontendKey allows us to breakdown the recorded data
 	// by the frontend used when uploading the video.
 	frontendKey tag.Key
-
+	
 	// videoSize will measure the size of processed videos.
 	videoSize *stats.Int64Measure
 )
 
 func main() {
 	ctx := context.Background()
-
+	
 	// Register an exporter to be able to retrieve
 	// the data from the subscribed views.
 	e, err := exporter.NewLogExporter(exporter.Options{ReportingInterval: time.Second})
@@ -51,13 +51,13 @@ func main() {
 	e.Start()
 	defer e.Stop()
 	defer e.Close()
-
+	
 	trace.ApplyConfig(trace.Config{DefaultSampler: trace.AlwaysSample()})
-
+	
 	frontendKey = tag.MustNewKey("example.com/keys/frontend")
 	videoSize = stats.Int64("example.com/measure/video_size", "size of processed videos", stats.UnitBytes)
 	view.SetReportingPeriod(2 * time.Second)
-
+	
 	// Create view to see the processed video size
 	// distribution broken down by frontend.
 	// Register will allow view data to be exported.
@@ -70,10 +70,10 @@ func main() {
 	}); err != nil {
 		log.Fatalf("Cannot register view: %v", err)
 	}
-
+	
 	// Process the video.
 	process(ctx)
-
+	
 	// Wait for a duration longer than reporting duration to ensure the stats
 	// library reports the collected data.
 	fmt.Println("Wait longer than the reporting duration...")
@@ -93,9 +93,9 @@ func process(ctx context.Context) {
 	defer span.End()
 	// Process video.
 	// Record the processed video size.
-
+	
 	// Sleep for [1,10] milliseconds to fake work.
 	time.Sleep(time.Duration(rand.Intn(10)+1) * time.Millisecond)
-
+	
 	stats.Record(ctx, videoSize.M(25648))
 }

@@ -18,12 +18,12 @@ import (
 	"log"
 	"net/http"
 	"time"
-
-	"go.opencensus.io/plugin/ochttp"
-	"go.opencensus.io/trace"
-
-	"go.opencensus.io/examples/exporter"
-	"go.opencensus.io/stats/view"
+	
+	"github.com/gozelle/opencensus-go/plugin/ochttp"
+	"github.com/gozelle/opencensus-go/trace"
+	
+	"github.com/gozelle/opencensus-go/examples/exporter"
+	"github.com/gozelle/opencensus-go/stats/view"
 )
 
 const server = "http://localhost:50030"
@@ -33,23 +33,23 @@ func main() {
 	exporter := &exporter.PrintExporter{}
 	view.RegisterExporter(exporter)
 	trace.RegisterExporter(exporter)
-
+	
 	// Always trace for this demo. In a production application, you should
 	// configure this to a trace.ProbabilitySampler set at the desired
 	// probability.
 	trace.ApplyConfig(trace.Config{DefaultSampler: trace.AlwaysSample()})
-
+	
 	// Report stats at every second.
 	view.SetReportingPeriod(1 * time.Second)
-
+	
 	client := &http.Client{Transport: &ochttp.Transport{}}
-
+	
 	resp, err := client.Get(server)
 	if err != nil {
 		log.Printf("Failed to get response: %v", err)
 	} else {
 		resp.Body.Close()
 	}
-
+	
 	time.Sleep(2 * time.Second) // Wait until stats are reported.
 }

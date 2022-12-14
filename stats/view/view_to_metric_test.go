@@ -19,14 +19,14 @@ import (
 	"context"
 	"testing"
 	"time"
-
+	
 	"encoding/json"
-
+	
 	"github.com/google/go-cmp/cmp"
-	"go.opencensus.io/metric/metricdata"
-	"go.opencensus.io/metric/metricexport"
-	"go.opencensus.io/stats"
-	"go.opencensus.io/tag"
+	"github.com/gozelle/opencensus-go/metric/metricdata"
+	"github.com/gozelle/opencensus-go/metric/metricexport"
+	"github.com/gozelle/opencensus-go/stats"
+	"github.com/gozelle/opencensus-go/tag"
 )
 
 type recordValWithTag struct {
@@ -48,26 +48,26 @@ var (
 	tk1v1 tag.Tag
 	tk2v2 tag.Tag
 	tags  []tag.Tag
-
+	
 	labelValues      []metricdata.LabelValue
 	emptyLabelValues []metricdata.LabelValue
-
+	
 	labelKeys []metricdata.LabelKey
-
+	
 	recordsInt64        []recordValWithTag
 	recordsFloat64      []recordValWithTag
 	recordsFloat64WoTag []recordValWithTag
-
+	
 	// distribution objects.
 	aggDist *Aggregation
 	aggCnt  *Aggregation
 	aggS    *Aggregation
 	aggL    *Aggregation
 	buckOpt *metricdata.BucketOptions
-
+	
 	// exemplar objects.
 	attachments metricdata.Attachments
-
+	
 	// views and descriptors
 	viewTypeFloat64Distribution         *View
 	viewTypeInt64Distribution           *View
@@ -108,7 +108,7 @@ func init() {
 	initAgg()
 	initViews()
 	initMetricDescriptors()
-
+	
 }
 
 func initTags() {
@@ -117,7 +117,7 @@ func initTags() {
 	tk3 = tag.MustNewKey("k3")
 	tk1v1 = tag.Tag{Key: tk1, Value: v1}
 	tk2v2 = tag.Tag{Key: tk2, Value: v2}
-
+	
 	tags = []tag.Tag{tk1v1, tk2v2}
 	labelValues = []metricdata.LabelValue{
 		{Value: v1, Present: true},
@@ -131,7 +131,7 @@ func initTags() {
 		{Key: tk1.Name()},
 		{Key: tk2.Name()},
 	}
-
+	
 	recordsInt64 = []recordValWithTag{
 		{tags: tags, value: int64(2)},
 		{tags: tags, value: int64(4)},
@@ -415,13 +415,13 @@ func Test_ViewToMetric(t *testing.T) {
 			},
 		},
 	}
-
+	
 	for _, tc := range tests {
 		tc.vi, _ = defaultWorker.tryRegisterView(tc.view)
 		tc.vi.clearRows()
 		tc.vi.subscribe()
 	}
-
+	
 	for i, tc := range tests {
 		for _, r := range tc.recordValue {
 			mods := []tag.Mutator{}
@@ -443,7 +443,7 @@ func Test_ViewToMetric(t *testing.T) {
 			}
 			tc.vi.addSample(tag.FromContext(ctx), v, nil, now)
 		}
-
+		
 		gotMetric := viewToMetric(tc.vi, nil, now)
 		if !cmp.Equal(gotMetric, tc.wantMetric) {
 			// JSON format is strictly for checking the content when test fails. Do not use JSON
@@ -502,7 +502,7 @@ func TestUnitConversionForAggCount(t *testing.T) {
 		tc.vi.clearRows()
 		tc.vi.subscribe()
 	}
-
+	
 	for _, tc := range tests {
 		tc.vi.addSample(tag.FromContext(context.Background()), 5.0, nil, now)
 		gotMetric := viewToMetric(tc.vi, nil, now)
@@ -611,16 +611,16 @@ func TestViewToMetric_OutOfOrderWithZeroBuckets(t *testing.T) {
 		if err != nil {
 			t.Fatalf("error registering view %v, err: %v", tt.v, err)
 		}
-
+		
 	}
-
+	
 	stats.Record(context.Background(), m.M(5), m.M(1), m.M(3))
 	time.Sleep(1 * time.Second)
-
+	
 	me := &mockExp{}
 	reader := metricexport.NewReader()
 	reader.ReadAndExport(me)
-
+	
 	var got *metricdata.Metric
 	lookup := func(vname string, metrics []*metricdata.Metric) *metricdata.Metric {
 		for _, m := range metrics {
@@ -630,7 +630,7 @@ func TestViewToMetric_OutOfOrderWithZeroBuckets(t *testing.T) {
 		}
 		return nil
 	}
-
+	
 	for _, tt := range tts {
 		got = lookup(tt.v.Name, me.metrics)
 		if got == nil {
@@ -638,7 +638,7 @@ func TestViewToMetric_OutOfOrderWithZeroBuckets(t *testing.T) {
 		}
 		got.TimeSeries[0].Points[0].Time = now
 		got.TimeSeries[0].StartTime = now
-
+		
 		want := tt.m
 		if diff := cmp.Diff(got, want); diff != "" {
 			t.Errorf("buckets differ -got +want: %s \n Serialized got %v\n, Serialized want %v\n", diff, serializeAsJSON(got), serializeAsJSON(want))

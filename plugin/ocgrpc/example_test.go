@@ -16,9 +16,9 @@ package ocgrpc_test
 
 import (
 	"log"
-
-	"go.opencensus.io/plugin/ocgrpc"
-	"go.opencensus.io/stats/view"
+	
+	"github.com/gozelle/opencensus-go/plugin/ocgrpc"
+	"github.com/gozelle/opencensus-go/stats/view"
 	"google.golang.org/grpc"
 )
 
@@ -27,7 +27,7 @@ func ExampleClientHandler() {
 	if err := view.Register(ocgrpc.DefaultClientViews...); err != nil {
 		log.Fatal(err)
 	}
-
+	
 	// Set up a connection to the server with the OpenCensus
 	// stats handler to enable stats and tracing.
 	conn, err := grpc.Dial("address", grpc.WithStatsHandler(&ocgrpc.ClientHandler{}))
@@ -42,7 +42,7 @@ func ExampleServerHandler() {
 	if err := view.Register(ocgrpc.DefaultServerViews...); err != nil {
 		log.Fatal(err)
 	}
-
+	
 	// Set up a new server with the OpenCensus
 	// stats handler to enable stats and tracing.
 	s := grpc.NewServer(grpc.StatsHandler(&ocgrpc.ServerHandler{}))

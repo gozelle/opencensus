@@ -21,8 +21,8 @@ import (
 	"sync/atomic"
 	"testing"
 	"time"
-
-	"go.opencensus.io/trace/tracestate"
+	
+	"github.com/gozelle/opencensus-go/trace/tracestate"
 )
 
 var (
@@ -140,7 +140,7 @@ func TestSampling(t *testing.T) {
 			t.Errorf("case %#v: starting new span: got TraceOptions %x, want %x", test, sc.TraceOptions, test.wantTraceOptions)
 		}
 	}
-
+	
 	// Test that for children of local spans, the default sampler has no effect.
 	for _, test := range []struct {
 		parentTraceOptions TraceOptions
@@ -202,12 +202,12 @@ func TestStartSpanWithRemoteParent(t *testing.T) {
 	if err := checkChild(sc, FromContext(ctx)); err != nil {
 		t.Error(err)
 	}
-
+	
 	ctx, _ = StartSpanWithRemoteParent(context.Background(), "startSpanWithRemoteParent", sc)
 	if err := checkChild(sc, FromContext(ctx)); err != nil {
 		t.Error(err)
 	}
-
+	
 	sc = SpanContext{
 		TraceID:      tid,
 		SpanID:       sid,
@@ -218,12 +218,12 @@ func TestStartSpanWithRemoteParent(t *testing.T) {
 	if err := checkChild(sc, FromContext(ctx)); err != nil {
 		t.Error(err)
 	}
-
+	
 	ctx, _ = StartSpanWithRemoteParent(context.Background(), "startSpanWithRemoteParent", sc)
 	if err := checkChild(sc, FromContext(ctx)); err != nil {
 		t.Error(err)
 	}
-
+	
 	ctx2, _ := StartSpan(ctx, "StartSpan")
 	parent := FromContext(ctx).SpanContext()
 	if err := checkChild(parent, FromContext(ctx2)); err != nil {
@@ -257,7 +257,7 @@ func (t *testExporter) ExportSpan(s *SpanData) {
 //
 // It also does some tests on the Span, and tests and clears some fields in the SpanData.
 func endSpan(span *Span) (*SpanData, error) {
-
+	
 	if !span.IsRecordingEvents() {
 		return nil, fmt.Errorf("IsRecordingEvents: got false, want true")
 	}
@@ -350,7 +350,7 @@ func TestSpanKind(t *testing.T) {
 			},
 		},
 	}
-
+	
 	for _, tt := range tests {
 		span := startSpan(tt.startOptions)
 		got, err := endSpan(span)
@@ -370,7 +370,7 @@ func TestSetSpanAttributes(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-
+	
 	want := &SpanData{
 		SpanContext: SpanContext{
 			TraceID:      tid,
@@ -390,7 +390,7 @@ func TestSetSpanAttributes(t *testing.T) {
 func TestSetSpanAttributesOverLimit(t *testing.T) {
 	cfg := Config{MaxAttributesPerSpan: 2}
 	ApplyConfig(cfg)
-
+	
 	span := startSpan(StartOptions{})
 	span.AddAttributes(StringAttribute("key1", "value1"))
 	span.AddAttributes(StringAttribute("key2", "value2"))
@@ -400,7 +400,7 @@ func TestSetSpanAttributesOverLimit(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-
+	
 	want := &SpanData{
 		SpanContext: SpanContext{
 			TraceID:      tid,
@@ -426,13 +426,13 @@ func TestAnnotations(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-
+	
 	for i := range got.Annotations {
 		if !checkTime(&got.Annotations[i].Time) {
 			t.Error("exporting span: expected nonzero Annotation Time")
 		}
 	}
-
+	
 	want := &SpanData{
 		SpanContext: SpanContext{
 			TraceID:      tid,
@@ -464,13 +464,13 @@ func TestAnnotationsOverLimit(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-
+	
 	for i := range got.Annotations {
 		if !checkTime(&got.Annotations[i].Time) {
 			t.Error("exporting span: expected nonzero Annotation Time")
 		}
 	}
-
+	
 	want := &SpanData{
 		SpanContext: SpanContext{
 			TraceID:      tid,
@@ -499,13 +499,13 @@ func TestMessageEvents(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-
+	
 	for i := range got.MessageEvents {
 		if !checkTime(&got.MessageEvents[i].Time) {
 			t.Error("exporting span: expected nonzero MessageEvent Time")
 		}
 	}
-
+	
 	want := &SpanData{
 		SpanContext: SpanContext{
 			TraceID:      tid,
@@ -537,13 +537,13 @@ func TestMessageEventsOverLimit(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-
+	
 	for i := range got.MessageEvents {
 		if !checkTime(&got.MessageEvents[i].Time) {
 			t.Error("exporting span: expected nonzero MessageEvent Time")
 		}
 	}
-
+	
 	want := &SpanData{
 		SpanContext: SpanContext{
 			TraceID:      tid,
@@ -572,7 +572,7 @@ func TestSetSpanName(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-
+	
 	if got.Name != want {
 		t.Errorf("span.Name=%q; want %q", got.Name, want)
 	}
@@ -596,15 +596,15 @@ func TestSetSpanNameAfterSpanEnd(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-
+	
 	// updating name after span.End
 	span.SetName("NoopName")
-
+	
 	// exported span should not be updated by previous call to SetName
 	if got.Name != want {
 		t.Errorf("span.Name=%q; want %q", got.Name, want)
 	}
-
+	
 	// span should not be exported again
 	var te testExporter
 	RegisterExporter(&te)
@@ -622,7 +622,7 @@ func TestSetSpanStatus(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-
+	
 	want := &SpanData{
 		SpanContext: SpanContext{
 			TraceID:      tid,
@@ -651,7 +651,7 @@ func TestAddLink(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-
+	
 	want := &SpanData{
 		SpanContext: SpanContext{
 			TraceID:      tid,
@@ -693,7 +693,7 @@ func TestAddLinkOverLimit(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-
+	
 	want := &SpanData{
 		SpanContext: SpanContext{
 			TraceID:      tid,
@@ -720,7 +720,7 @@ func TestUnregisterExporter(t *testing.T) {
 	var te testExporter
 	RegisterExporter(&te)
 	UnregisterExporter(&te)
-
+	
 	ctx := startSpan(StartOptions{})
 	endSpan(ctx)
 	if len(te.spans) != 0 {
@@ -839,7 +839,7 @@ func TestChildSpanCount(t *testing.T) {
 	_, span2 := StartSpan(ctx1, "span-2", WithSampler(AlwaysSample()))
 	span2.End()
 	span1.End()
-
+	
 	_, span3 := StartSpan(ctx, "span-3", WithSampler(AlwaysSample()))
 	span3.End()
 	span0.End()
@@ -871,13 +871,13 @@ func TestExecutionTracerTaskEnd(t *testing.T) {
 	executionTracerTaskEnd := func() {
 		atomic.AddUint64(&n, 1)
 	}
-
+	
 	var spans []*span
 	_, s := StartSpan(context.Background(), "foo", WithSampler(NeverSample()))
 	sp := s.internal.(*span)
 	sp.executionTracerTaskEnd = executionTracerTaskEnd
 	spans = append(spans, sp) // never sample
-
+	
 	_, s = StartSpanWithRemoteParent(context.Background(), "foo", SpanContext{
 		TraceID:      TraceID{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15},
 		SpanID:       SpanID{0, 1, 2, 3, 4, 5, 6, 7},
@@ -886,12 +886,12 @@ func TestExecutionTracerTaskEnd(t *testing.T) {
 	sp = s.internal.(*span)
 	sp.executionTracerTaskEnd = executionTracerTaskEnd
 	spans = append(spans, sp) // parent not sampled
-
+	
 	_, s = StartSpan(context.Background(), "foo", WithSampler(AlwaysSample()))
 	sp = s.internal.(*span)
 	sp.executionTracerTaskEnd = executionTracerTaskEnd
 	spans = append(spans, sp) // always sample
-
+	
 	for _, span := range spans {
 		span.End()
 	}

@@ -20,11 +20,11 @@ import (
 	"io"
 	"reflect"
 	"testing"
-
-	"go.opencensus.io/internal/testpb"
-	"go.opencensus.io/plugin/ocgrpc"
-	"go.opencensus.io/stats/view"
-	"go.opencensus.io/tag"
+	
+	"github.com/gozelle/opencensus-go/internal/testpb"
+	"github.com/gozelle/opencensus-go/plugin/ocgrpc"
+	"github.com/gozelle/opencensus-go/stats/view"
+	"github.com/gozelle/opencensus-go/tag"
 )
 
 var keyAccountId = tag.MustNewKey("account_id")
@@ -34,7 +34,7 @@ func TestEndToEnd_Single(t *testing.T) {
 	defer view.Unregister(ocgrpc.DefaultClientViews...)
 	view.Register(ocgrpc.DefaultServerViews...)
 	defer view.Unregister(ocgrpc.DefaultServerViews...)
-
+	
 	extraViews := []*view.View{
 		ocgrpc.ServerReceivedMessagesPerRPCView,
 		ocgrpc.ClientReceivedMessagesPerRPCView,
@@ -45,13 +45,13 @@ func TestEndToEnd_Single(t *testing.T) {
 	}
 	view.Register(extraViews...)
 	defer view.Unregister(extraViews...)
-
+	
 	client, done := testpb.NewTestClient(t)
 	defer done()
-
+	
 	ctx := context.Background()
 	ctx, _ = tag.New(ctx, tag.Insert(keyAccountId, "abc123"))
-
+	
 	var (
 		clientMethodTag        = tag.Tag{Key: ocgrpc.KeyClientMethod, Value: "testpb.Foo/Single"}
 		serverMethodTag        = tag.Tag{Key: ocgrpc.KeyServerMethod, Value: "testpb.Foo/Single"}
@@ -60,7 +60,7 @@ func TestEndToEnd_Single(t *testing.T) {
 		serverStatusUnknownTag = tag.Tag{Key: ocgrpc.KeyClientStatus, Value: "UNKNOWN"}
 		clientStatusUnknownTag = tag.Tag{Key: ocgrpc.KeyServerStatus, Value: "UNKNOWN"}
 	)
-
+	
 	_, err := client.Single(ctx, &testpb.FooRequest{})
 	if err != nil {
 		t.Fatal(err)
@@ -69,13 +69,13 @@ func TestEndToEnd_Single(t *testing.T) {
 	checkCount(t, ocgrpc.ServerStartedRPCsView, 1, serverMethodTag)
 	checkCount(t, ocgrpc.ClientCompletedRPCsView, 1, clientMethodTag, clientStatusOKTag)
 	checkCount(t, ocgrpc.ServerCompletedRPCsView, 1, serverMethodTag, serverStatusOKTag)
-
+	
 	_, _ = client.Single(ctx, &testpb.FooRequest{Fail: true})
 	checkCount(t, ocgrpc.ClientStartedRPCsView, 2, clientMethodTag)
 	checkCount(t, ocgrpc.ServerStartedRPCsView, 2, serverMethodTag)
 	checkCount(t, ocgrpc.ClientCompletedRPCsView, 1, clientMethodTag, serverStatusUnknownTag)
 	checkCount(t, ocgrpc.ServerCompletedRPCsView, 1, serverMethodTag, clientStatusUnknownTag)
-
+	
 	tcs := []struct {
 		v    *view.View
 		tags []tag.Tag
@@ -90,7 +90,7 @@ func TestEndToEnd_Single(t *testing.T) {
 		{ocgrpc.ClientReceivedBytesPerRPCView, []tag.Tag{clientMethodTag}, 0.0},
 		{ocgrpc.ServerSentBytesPerRPCView, []tag.Tag{serverMethodTag}, 0.0},
 	}
-
+	
 	for _, tt := range tcs {
 		t.Run("view="+tt.v.Name, func(t *testing.T) {
 			dist := getDistribution(t, tt.v, tt.tags...)
@@ -107,10 +107,10 @@ func TestEndToEnd_Single(t *testing.T) {
 func TestEndToEnd_Stream(t *testing.T) {
 	view.Register(ocgrpc.DefaultClientViews...)
 	defer view.Unregister(ocgrpc.DefaultClientViews...)
-
+	
 	view.Register(ocgrpc.DefaultServerViews...)
 	defer view.Unregister(ocgrpc.DefaultServerViews...)
-
+	
 	extraViews := []*view.View{
 		ocgrpc.ServerReceivedMessagesPerRPCView,
 		ocgrpc.ClientReceivedMessagesPerRPCView,
@@ -121,22 +121,22 @@ func TestEndToEnd_Stream(t *testing.T) {
 	}
 	view.Register(extraViews...)
 	defer view.Unregister(extraViews...)
-
+	
 	client, done := testpb.NewTestClient(t)
 	defer done()
-
+	
 	ctx := context.Background()
 	ctx, _ = tag.New(ctx, tag.Insert(keyAccountId, "abc123"))
-
+	
 	var (
 		clientMethodTag   = tag.Tag{Key: ocgrpc.KeyClientMethod, Value: "testpb.Foo/Multiple"}
 		serverMethodTag   = tag.Tag{Key: ocgrpc.KeyServerMethod, Value: "testpb.Foo/Multiple"}
 		clientStatusOKTag = tag.Tag{Key: ocgrpc.KeyClientStatus, Value: "OK"}
 		serverStatusOKTag = tag.Tag{Key: ocgrpc.KeyServerStatus, Value: "OK"}
 	)
-
+	
 	const msgCount = 3
-
+	
 	stream, err := client.Multiple(ctx)
 	if err != nil {
 		t.Fatal(err)
@@ -154,12 +154,12 @@ func TestEndToEnd_Stream(t *testing.T) {
 	if _, err = stream.Recv(); err != io.EOF {
 		t.Fatal(err)
 	}
-
+	
 	checkCount(t, ocgrpc.ClientStartedRPCsView, 1, clientMethodTag)
 	checkCount(t, ocgrpc.ServerStartedRPCsView, 1, serverMethodTag)
 	checkCount(t, ocgrpc.ClientCompletedRPCsView, 1, clientMethodTag, clientStatusOKTag)
 	checkCount(t, ocgrpc.ServerCompletedRPCsView, 1, serverMethodTag, serverStatusOKTag)
-
+	
 	tcs := []struct {
 		v   *view.View
 		tag tag.Tag
@@ -194,7 +194,7 @@ func getCount(t *testing.T, v *view.View, tags ...tag.Tag) (int64, bool) {
 			return 0, false
 		}
 	}
-
+	
 	rows, err := view.RetrieveData(v.Name)
 	if err != nil {
 		t.Fatal(err)

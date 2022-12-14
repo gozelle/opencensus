@@ -31,13 +31,13 @@ The program lets you choose the amount of memory (in MB) to consume. Choose diff
 ## Run the example
 
 ```
-$ go get go.opencensus.io/examples/gauges/...
+$ go get github.com/gozelle/opencensus-go/examples/gauges/...
 ```
 
 then:
 
 ```
-$ go run $(go env GOPATH)/src/go.opencensus.io/examples/gauges/gauge.go
+$ go run $(go env GOPATH)/src/github.com/gozelle/opencensus-go/examples/gauges/gauge.go
 ```
 
 ## How to use gauges?
@@ -148,10 +148,10 @@ import (
 	"strings"
 	"time"
 
-	"go.opencensus.io/examples/exporter"
-	"go.opencensus.io/metric"
-	"go.opencensus.io/metric/metricdata"
-	"go.opencensus.io/metric/metricproducer"
+	"github.com/gozelle/opencensus-go/examples/exporter"
+	"github.com/gozelle/opencensus-go/metric"
+	"github.com/gozelle/opencensus-go/metric/metricdata"
+	"github.com/gozelle/opencensus-go/metric/metricproducer"
 )
 
 const (

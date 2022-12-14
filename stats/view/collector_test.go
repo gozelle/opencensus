@@ -17,8 +17,8 @@ package view
 import (
 	"context"
 	"testing"
-
-	"go.opencensus.io/tag"
+	
+	"github.com/gozelle/opencensus-go/tag"
 )
 
 func TestEncodeDecodeTags(t *testing.T) {
@@ -28,21 +28,21 @@ func TestEncodeDecodeTags(t *testing.T) {
 		keys []tag.Key
 		want map[tag.Key][]byte
 	}
-
+	
 	k1 = tag.MustNewKey("/encodedecodetest/k1")
 	k2 = tag.MustNewKey("/encodedecodetest/k2")
 	k3 = tag.MustNewKey("/encodedecodetest/k3")
-
+	
 	ctx1, _ := tag.New(ctx)
 	ctx2, _ := tag.New(ctx, tag.Insert(k2, "v2"))
 	ctx3, _ := tag.New(ctx, tag.Insert(k1, "v1"), tag.Insert(k2, "v2"))
 	ctx4, _ := tag.New(ctx, tag.Insert(k1, "v1"), tag.Insert(k2, "v2"), tag.Insert(k3, "v3"))
-
+	
 	m1 := tag.FromContext(ctx1)
 	m2 := tag.FromContext(ctx2)
 	m3 := tag.FromContext(ctx3)
 	m4 := tag.FromContext(ctx4)
-
+	
 	tests := []testData{
 		{
 			m1,
@@ -90,13 +90,13 @@ func TestEncodeDecodeTags(t *testing.T) {
 			},
 		},
 	}
-
+	
 	for label, tt := range tests {
 		tags := decodeTags(encodeWithKeys(tt.m, tt.keys), tt.keys)
 		if got, want := len(tags), len(tt.want); got != want {
 			t.Fatalf("%d: len(decoded) = %v; not %v", label, got, want)
 		}
-
+		
 		for _, tag := range tags {
 			if _, ok := tt.want[tag.Key]; !ok {
 				t.Errorf("%d: missing key %v", label, tag.Key)

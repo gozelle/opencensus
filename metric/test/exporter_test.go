@@ -3,13 +3,13 @@ package test
 import (
 	"context"
 	"fmt"
-
-	"go.opencensus.io/metric"
-	"go.opencensus.io/metric/metricdata"
-	"go.opencensus.io/metric/metricexport"
-	"go.opencensus.io/stats"
-	"go.opencensus.io/stats/view"
-	"go.opencensus.io/tag"
+	
+	"github.com/gozelle/opencensus-go/metric"
+	"github.com/gozelle/opencensus-go/metric/metricdata"
+	"github.com/gozelle/opencensus-go/metric/metricexport"
+	"github.com/gozelle/opencensus-go/stats"
+	"github.com/gozelle/opencensus-go/stats/view"
+	"github.com/gozelle/opencensus-go/tag"
 )
 
 var (
@@ -34,14 +34,14 @@ func ExampleExporter_stats() {
 	metrics := NewExporter(metricReader)
 	metrics.ReadAndExport()
 	metricBase := getCounter(metrics, myMetric.Name(), newMetricKey("label1"))
-
+	
 	for i := 1; i <= 3; i++ {
 		// The code under test begins here.
 		stats.RecordWithTags(context.Background(),
 			[]tag.Mutator{tag.Upsert(myTag, "label1")},
 			myMetric.M(int64(i)))
 		// The code under test ends here.
-
+		
 		metrics.ReadAndExport()
 		metricValue := getCounter(metrics, myMetric.Name(), newMetricKey("label1"))
 		fmt.Printf("increased by %d\n", metricValue-metricBase)
@@ -71,7 +71,7 @@ func ExampleExporter_metric() {
 		// The code under test begins here.
 		m.i = int64(i)
 		// The code under test ends here.
-
+		
 		metrics.ExportMetrics(context.Background(), r.Read())
 		metricValue := getCounter(metrics, "derived", newMetricKey("l1"))
 		fmt.Println(metricValue)

@@ -21,11 +21,11 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
-
-	"go.opencensus.io/plugin/ochttp/propagation/b3"
-	"go.opencensus.io/plugin/ochttp/propagation/tracecontext"
-	"go.opencensus.io/trace"
-	"go.opencensus.io/trace/propagation"
+	
+	"github.com/gozelle/opencensus-go/plugin/ochttp/propagation/b3"
+	"github.com/gozelle/opencensus-go/plugin/ochttp/propagation/tracecontext"
+	"github.com/gozelle/opencensus-go/trace"
+	"github.com/gozelle/opencensus-go/trace/propagation"
 )
 
 func TestRoundTripAllFormats(t *testing.T) {
@@ -34,13 +34,13 @@ func TestRoundTripAllFormats(t *testing.T) {
 		&b3.HTTPFormat{},
 		&tracecontext.HTTPFormat{},
 	}
-
+	
 	ctx := context.Background()
 	ctx, span := trace.StartSpan(ctx, "test", trace.WithSampler(trace.AlwaysSample()))
 	sc := span.SpanContext()
 	wantStr := fmt.Sprintf("trace_id=%x, span_id=%x, options=%d", sc.TraceID, sc.SpanID, sc.TraceOptions)
 	defer span.End()
-
+	
 	for _, format := range formats {
 		srv := httptest.NewServer(http.HandlerFunc(func(resp http.ResponseWriter, req *http.Request) {
 			sc, ok := format.SpanContextFromRequest(req)

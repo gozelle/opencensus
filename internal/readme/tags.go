@@ -17,16 +17,16 @@ package readme
 import (
 	"context"
 	"log"
-
-	"go.opencensus.io/tag"
+	
+	"github.com/gozelle/opencensus-go/tag"
 )
 
 func tagsExamples() {
 	ctx := context.Background()
-
+	
 	osKey := tag.MustNewKey("example.com/keys/user-os")
 	userIDKey := tag.MustNewKey("example.com/keys/user-id")
-
+	
 	// START new
 	ctx, err := tag.New(ctx,
 		tag.Insert(osKey, "macOS-10.12.5"),
@@ -36,7 +36,7 @@ func tagsExamples() {
 		log.Fatal(err)
 	}
 	// END new
-
+	
 	// START profiler
 	ctx, err = tag.New(ctx,
 		tag.Insert(osKey, "macOS-10.12.5"),
